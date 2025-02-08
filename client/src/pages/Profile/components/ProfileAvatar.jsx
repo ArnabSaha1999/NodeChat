@@ -26,6 +26,7 @@ const ProfileAvatar = () => {
             <AvatarImage
               src={`${CLOUDINARY_BASE_URL}/${userInfo.avatar}`}
               alt="DP"
+              className="object-cover w-full h-full bg-black"
             />
           ) : (
             <div className="uppercase text-5xl flex items-center justify-center border-[1px] dark:border-[#FFD700] dark:text-[#FFD700] border-[#577BC1] text-[#577BC1] w-48 h-48 2xl:w-32 2xl:h-32 rounded-full overflow-hidden">

@@ -1,5 +1,8 @@
 import { useProfileUIContext } from "@/context/ProfileUIContext";
+import { apiClient } from "@/lib/apiClient";
 import { useAppStore } from "@/store";
+import { CHOOSE_THEME_PREFERENCE_ROUTE } from "@/utils/constants";
+import { ContainerWithChildren } from "postcss/lib/container";
 import React, { useEffect, useRef, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { GrRevert } from "react-icons/gr";
@@ -28,8 +31,31 @@ const Theme = () => {
   }, [tempTheme]);
 
   const handleDiscardChange = () => {
-    setTempTheme(userInfo.themePreference);
+    if (tempTheme !== userInfo.themePreference) {
+      setTempTheme(userInfo.themePreference);
+    }
   };
+
+  const applyTheme = async (theme) => {
+    if (theme === userInfo.themePreference) {
+      return;
+    }
+    try {
+      const res = await apiClient.post(
+        CHOOSE_THEME_PREFERENCE_ROUTE,
+        { theme },
+        {
+          withCredentials: true,
+        }
+      );
+      if (res.status === 200 && res.data?.user) {
+        setUserInfo({ ...res.data.user });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <div>
@@ -37,9 +63,9 @@ const Theme = () => {
           Choose Your Theme
         </h1>
       </div>
-      <div className="flex flex-col justify-between items-center">
+      <div className="flex flex-col justify-between items-center mt-20">
         <div className="mb-10 flex flex-col gap-5 justify-center items-center">
-          <p className="text-2xl sm:text-lg">
+          <p className="text-2xl sm:text-lg mb-10">
             Select the theme that suits you best.
           </p>
           <div className="flex flex-row gap-8 sm:gap-2">
@@ -116,7 +142,7 @@ const Theme = () => {
         </div>
         <div className="mt-10 flex gap-4 sm:flex-col sm:w-full sm:px-8">
           <button
-            // onClick={handleApply}
+            onClick={() => applyTheme(tempTheme)}
             className="border-2 border-[#577BC1] text-[#577BC1] hover:bg-[#577BC1] hover:text-white dark:border-[#FFD700] dark:text-[#FFD700] hover:dark:bg-[#FFD700] hover:dark:text-black px-5 py-3 rounded-lg text-lg font-medium flex items-center gap-2 transition-all sm:w-full justify-center"
           >
             <FaCheck />

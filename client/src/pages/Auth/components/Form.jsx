@@ -280,7 +280,7 @@ const Form = ({ isSignUpForm }) => {
             }
             className="absolute top-1/2 right-4 translate-y-[5px]"
           >
-            {isConfirmPasswordVisible ? <IoEyeOffOutline /> : <IoEyeOutline />}
+            {isConfirmPasswordVisible ? <IoEyeOutline /> : <IoEyeOffOutline />}
           </button>
           {confirmPasswordError && (
             <p className="text-red-500 px-2 text-sm absolute top-full bottom-[-1.5rem] left-0">

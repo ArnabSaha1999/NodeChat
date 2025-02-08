@@ -13,7 +13,6 @@ import {
   updateProfileAvatar,
 } from "../controllers/auth.controller.js";
 import { validateMulter, verifyToken } from "../middlewares/auth.middleware.js";
-import { verify } from "jsonwebtoken";
 
 const authRoutes = Router();
 
@@ -43,6 +42,6 @@ authRoutes.post("/choose-theme-preference", verifyToken, chooseThemePreference);
 
 authRoutes.post("/change-password", verifyToken, changePassword);
 
-authRoutes.post("/logout", verifyToken, logOut);
+authRoutes.post("/logout", logOut);
 
 export default authRoutes;

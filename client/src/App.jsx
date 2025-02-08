@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { apiClient } from "./lib/apiClient";
 import { GET_USER_INFO } from "./utils/constants";
 import { AuthFormProvider } from "./context/authFormContext";
-import { ProfileFormProvider } from "./context/ProfileFormContext";
 import { ProfileUIProvider } from "./context/ProfileUIContext";
 
 function App() {
@@ -15,15 +14,12 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log("App.jsx re-rendering");
-    console.log(userInfo);
     const getUserInfo = async () => {
       try {
         const res = await apiClient.get(GET_USER_INFO, {
           withCredentials: true,
         });
         if (res.status === 200 && res.data.user.id) {
-          console.log(res.data.user);
           setUserInfo(res.data.user);
         } else {
           setUserInfo(undefined);
@@ -37,11 +33,20 @@ function App() {
 
     if (!userInfo) {
       getUserInfo();
-    } else {
-      setLoading(false);
     }
     console.log(userInfo);
   }, [userInfo, setUserInfo]);
+
+  useEffect(() => {
+    if (userInfo?.themePreference) {
+      document.documentElement.classList.toggle(
+        "dark",
+        userInfo.themePreference === "dark"
+      );
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [userInfo?.themePreference]);
 
   if (loading) {
     return (

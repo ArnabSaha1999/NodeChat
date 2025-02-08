@@ -314,7 +314,7 @@ export const removeProfileAvatar = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId);
     if (!user) {
-      return res.status(400).send("File is required!");
+      res.status(404).send("User not found!");
     }
     if (user.avatar) {
       try {
@@ -347,8 +347,50 @@ export const removeProfileAvatar = async (req, res, next) => {
   }
 };
 
-export const chooseThemePreference = async (req, res, next) => {};
+export const chooseThemePreference = async (req, res, next) => {
+  const { theme } = req.body;
+  if (!theme) {
+    return res.status(400).send("Please choose a theme!");
+  }
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      res.status(404).send("User not found!");
+    }
+    if (theme !== user.themePreference) {
+      user.themePreference = theme;
+      await user.save();
+    }
+    return res.status(200).json({
+      user: {
+        id: user.id,
+        email: user.email,
+        profileSetup: user.profileSetup,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        color: user.color || 0,
+        avatar: user.avatar || null,
+        themePreference: user.themePreference,
+        isOnline: user.isOnline,
+        lastSeen: user.lastSeen,
+        bio: user.bio || null,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal server error!");
+  }
+};
 
 export const changePassword = async (req, res, next) => {};
 
-export const logOut = async (req, res, next) => {};
+export const logOut = async (req, res, next) => {
+  try {
+    console.log("Log Out backend");
+    res.cookie("jwt", {}, { maxAge: 1, secure: true, sameSite: "None" });
+    return res.status(200).send("Log out successful!");
+  } catch (error) {
+    console.log({ error });
+    return res.status(500).send("Internal Server Error!");
+  }
+};

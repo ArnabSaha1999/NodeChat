@@ -1,5 +1,12 @@
+import { useNavigate } from "react-router-dom";
+
 const Chat = () => {
-  return <div>Chat Page</div>;
+  const navigate = useNavigate();
+  return (
+    <div>
+      <button onClick={() => navigate("/profile")}>Profile</button>
+    </div>
+  );
 };
 
 export default Chat;

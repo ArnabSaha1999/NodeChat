@@ -15,6 +15,7 @@ import {
   UPDATE_PROFILE_AVATAR_ROUTE,
 } from "@/utils/constants";
 import { apiClient } from "@/lib/apiClient";
+import { AvatarFallback } from "@/components/ui/avatar";
 
 const ProfileAvatarContainer = () => {
   const { userInfo, setUserInfo } = useAppStore();
@@ -23,15 +24,13 @@ const ProfileAvatarContainer = () => {
   const updateAvatarFileInputRef = useRef(null);
   const [error, setError] = useState("");
   const [isUploadClicked, setIsUploadClicked] = useState(false);
-  const { avatar, setAvatar } = useProfileAvatarContext();
+  const fallbackSrc = "NodeChat/FallBack_Image_xmulal.jpg";
   const {
     avatarContainerRef,
     isAvatarContainerOpen,
     setIsAvatarContainerOpen,
     handleAvatarEdit,
   } = useProfileAvatarContext();
-
-  useEffect(() => {}, [userInfo, avatar]);
 
   const handleClickOutside = (event) => {
     if (
@@ -191,7 +190,7 @@ const ProfileAvatarContainer = () => {
     >
       <div
         ref={avatarContainerRef}
-        className="md:w-[100vw] md:h-[100vh] w-[450px] h-[600px] min-w-[330px] flex flex-col justify-between absolute z-[10000] bg-white dark:bg-slate-800 shadow-2xl rounded-2xl p-10 md:p-5"
+        className="md:w-[100vw] md:h-[100vh] w-[500px] min-w-[330px] flex flex-col justify-between absolute z-[10000] bg-white dark:bg-slate-800 shadow-2xl rounded-2xl gap-10 px-5 py-10"
       >
         <div className="flex flex-col gap-5">
           <div className="flex flex-row justify-between items-center">
@@ -218,14 +217,22 @@ const ProfileAvatarContainer = () => {
           </div>
         </div>
         <div className="flex flex-col justify-between items-center gap-10">
-          <Avatar className="w-56 h-56 2xl:w-52 2xl:h-52 rounded-full overflow-hidden">
+          <Avatar className="w-72 h-72 2xl:w-72 2xl:h-72 rounded-full overflow-hidden">
             {userInfo.avatar ? (
-              <AvatarImage
-                src={`${CLOUDINARY_BASE_URL}/${userInfo.avatar}`}
-                alt="DP"
-              />
+              <>
+                <AvatarImage
+                  src={`${CLOUDINARY_BASE_URL}/${userInfo.avatar}`}
+                  className="object-cover w-full h-full bg-black"
+                />
+                <AvatarFallback>
+                  <img
+                    src="https://res.cloudinary.com/dx1ip1gbo/image/upload/v1739031724/NodeChat/FallBack_Image_xmulal.jpg"
+                    className="object-cover w-full h-full bg-black"
+                  />
+                </AvatarFallback>
+              </>
             ) : (
-              <div className="uppercase text-6xl flex items-center justify-center border-[1px] dark:border-[#FFD700] dark:text-[#FFD700] border-[#577BC1] text-[#577BC1] w-56 h-56 2xl:w-52 2xl:h-52 rounded-full overflow-hidden">
+              <div className="uppercase text-6xl flex items-center justify-center border-[1px] dark:border-[#FFD700] dark:text-[#FFD700] border-[#577BC1] text-[#577BC1] w-72 h-72 2xl:w-72 2xl:h-72 rounded-full overflow-hidden">
                 {userInfo.email.split("").shift()}
               </div>
             )}

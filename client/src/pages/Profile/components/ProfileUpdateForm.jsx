@@ -132,7 +132,7 @@ const ProfileUpdateForm = () => {
           Profile Update
         </h1>
       </div>
-      <div className="bg-white dark:bg-slate-600 px-5 sm:px-2 py-10 rounded-xl shadow-2xl flex flex-col gap-10">
+      <div className="bg-white dark:bg-slate-600 px-5 sm:px-2 py-10 rounded-xl shadow-2xl flex flex-col gap-10 mt-20">
         <div className="flex w-full xl:flex-col gap-5 xl:gap-10">
           <div className="w-full flex flex-col gap-2 relative">
             <Label

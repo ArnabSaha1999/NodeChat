@@ -12,9 +12,34 @@ import ProfileAvatar from "./ProfileAvatar";
 import { useProfileUIContext } from "@/context/ProfileUIContext";
 import { ProfileAvatarContextProvider } from "@/context/ProfileAvatarContext";
 import ModalContainer from "./ProfileAvatarContainer";
+import { LogOut } from "lucide-react";
+import { apiClient } from "@/lib/apiClient";
+import { LOGOUT_ROUTE } from "@/utils/constants";
+import { useNavigate } from "react-router-dom";
+import { useAppStore } from "@/store";
 
 const Sidebar = () => {
+  const { setUserInfo } = useAppStore();
+  const navigate = useNavigate();
   const { isSideBarOpen } = useProfileUIContext();
+
+  const logOut = async () => {
+    try {
+      const res = await apiClient.post(
+        LOGOUT_ROUTE,
+        {},
+        { withCredentials: true }
+      );
+
+      if (res.status === 200) {
+        navigate("/auth/login");
+        setUserInfo(null);
+      }
+    } catch (error) {
+      console.log({ error });
+    }
+  };
+
   return (
     <div
       className={`flex flex-col justify-between w-[30vw] 2xl:w-[35vw] md:w-[100vw] border-r-2 dark:border-white/50 border-black/50 min-h-[100vh] transition-all duration-300 relative ${
@@ -34,13 +59,15 @@ const Sidebar = () => {
           <ProfileButton icon={RiMessage2Fill} text={"Chats"} />
         </div>
       </div>
-      <ProfileButton
+      <button
+        onClick={logOut}
         className={
           "w-full text-xl text-red-500 border-red-500 hover:bg-red-500 border-2 hover:text-white text-left px-10 py-5 rounded-sm transition-all duration-300 flex justify-start items-center gap-3"
         }
-        icon={RiLogoutBoxRLine}
-        text="Log Out"
-      />
+      >
+        <RiLogoutBoxRLine className="inline text-3xl" />
+        Log Out
+      </button>
     </div>
   );
 };

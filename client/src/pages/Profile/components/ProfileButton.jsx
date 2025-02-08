@@ -1,15 +1,21 @@
 import { useProfileFormContext } from "@/context/ProfileFormContext";
 import { useProfileUIContext } from "@/context/ProfileUIContext";
+import { useNavigate } from "react-router-dom";
 
 const ProfileButton = ({ icon: Icon, text, className }) => {
   const { isActive, setIsActive, setIsThemeContainerOpen, setIsSideBarOpen } =
     useProfileUIContext();
+  const navigate = useNavigate();
   return (
     <div className="w-full">
       <button
         onClick={() => {
-          setIsActive(text);
-          setIsSideBarOpen(false);
+          if (text !== "Chats") {
+            setIsActive(text);
+            setIsSideBarOpen(false);
+          } else {
+            navigate("/chat");
+          }
         }}
         className={`${
           !className
