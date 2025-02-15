@@ -8,7 +8,7 @@ import { apiClient } from "./lib/apiClient";
 import { GET_USER_INFO } from "./utils/constants";
 import { AuthFormProvider } from "./context/authFormContext";
 import { ProfileUIProvider } from "./context/ProfileUIContext";
-
+import { ToastContainer } from "react-toastify";
 function App() {
   const { userInfo, setUserInfo } = useAppStore();
   const [loading, setLoading] = useState(true);
@@ -108,6 +108,18 @@ function App() {
           />
           <Route path="/*" element={<Navigate to="/auth/login" />} />
         </Routes>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick={false}
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
       </BrowserRouter>
     </div>
   );

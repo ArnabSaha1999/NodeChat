@@ -24,18 +24,10 @@ export const ProfileAvatarContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      localStorage.setItem("isAvatarContainerOpen", false);
-    };
-
-    // Set values in localStorage initially
     localStorage.setItem("isAvatarContainerOpen", isAvatarContainerOpen);
 
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
     return () => {
-      // Cleanup event listener and reset localStorage values on component unmount
-      window.removeEventListener("beforeunload", handleBeforeUnload);
+      localStorage.setItem("isAvatarContainerOpen", false);
     };
   }, [isAvatarContainerOpen]);
 

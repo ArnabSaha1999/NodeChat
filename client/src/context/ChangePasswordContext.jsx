@@ -15,10 +15,38 @@ export const ChangePasswordProvider = ({ children }) => {
   const [newPasswordError, setNewPasswordError] = useState("");
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState("");
 
+  const [oldPasswordSuccess, setOldPasswordSuccess] = useState(false);
+  const [newPasswordSuccess, setNewPasswordSuccess] = useState(false);
+  const [confirmNewPasswordSuccess, setConfirmNewPasswordSuccess] =
+    useState(false);
+
   const [isOldPasswordVisible, setIsOldPasswordVisible] = useState(false);
   const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
   const [isConfirmNewPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
+
+  const [passwordErrors, setPasswordErrors] = useState({
+    length: [false, ""],
+    hasUppercase: [false, ""],
+    hasLowercase: [false, ""],
+    hasNumber: [false, ""],
+    hasSpecialChar: [false, ""],
+  });
+
+  const resetForm = () => {
+    setOldPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setOldPasswordError("");
+    setNewPasswordError("");
+    setConfirmNewPasswordError("");
+    setOldPasswordSuccess("");
+    setNewPasswordSuccess("");
+    setConfirmNewPasswordSuccess("");
+    setIsOldPasswordVisible(false);
+    setIsNewPasswordVisible(false);
+    setIsConfirmPasswordVisible(false);
+  };
 
   return (
     <ChangePasswordContext.Provider
@@ -35,12 +63,21 @@ export const ChangePasswordProvider = ({ children }) => {
         setNewPasswordError,
         confirmNewPasswordError,
         setConfirmNewPasswordError,
+        oldPasswordSuccess,
+        setOldPasswordSuccess,
+        newPasswordSuccess,
+        setNewPasswordSuccess,
+        confirmNewPasswordSuccess,
+        setConfirmNewPasswordSuccess,
         isOldPasswordVisible,
         setIsOldPasswordVisible,
         isNewPasswordVisible,
         setIsNewPasswordVisible,
         isConfirmNewPasswordVisible,
         setIsConfirmPasswordVisible,
+        passwordErrors,
+        setPasswordErrors,
+        resetForm,
       }}
     >
       {children}

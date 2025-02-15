@@ -123,3 +123,18 @@
   font-weight: 400;
   font-style: normal;
 }
+
+/* Hide scrollbar in WebKit browsers but allow scrolling */
+.EmojiPickerReact .epr-body::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+/* Hide scrollbar in Firefox but allow scrolling */
+.EmojiPickerReact .epr-body {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  -ms-overflow-style: none;
+  overflow-y: auto !important; /* Ensure scrolling works */
+}
+

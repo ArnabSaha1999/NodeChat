@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import { jwtSecret } from "../environment.js";
 import User from "../models/user.model.js";
-import { compare } from "bcrypt";
+import { compare, hash } from "bcrypt";
 import { v2 as cloudinary } from "cloudinary";
+import { validatePassword } from "../utils/validators/validatePassword.js";
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -382,11 +383,52 @@ export const chooseThemePreference = async (req, res, next) => {
   }
 };
 
-export const changePassword = async (req, res, next) => {};
+export const changePassword = async (req, res, next) => {
+  try {
+    const { oldPassword, newPassword, confirmNewPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res
+        .status(400)
+        .send("Old password and new password are required!");
+    }
+
+    const { isValid, validators } = validatePassword(newPassword);
+
+    if (!isValid) {
+      return res.status(400).send(validators);
+    }
+
+    const user = await User.findById(req.userId);
+
+    if (!user) {
+      return res.status(404).send("User not found!");
+    }
+
+    const isOldPasswordValid = await compare(oldPassword, user.password);
+    if (!isOldPasswordValid)
+      return res
+        .status(400)
+        .json({ oldPasswordError: "Old password is incorrect!" });
+
+    if (newPassword !== confirmNewPassword) {
+      return res
+        .status(400)
+        .send("New password and confirm password do not match!");
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    return res.status(200).send("Password updated successfully!");
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal server error!");
+  }
+};
 
 export const logOut = async (req, res, next) => {
   try {
-    console.log("Log Out backend");
     res.cookie("jwt", {}, { maxAge: 1, secure: true, sameSite: "None" });
     return res.status(200).send("Log out successful!");
   } catch (error) {

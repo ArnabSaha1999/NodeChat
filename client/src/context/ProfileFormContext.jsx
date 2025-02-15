@@ -15,6 +15,10 @@ export const ProfileFormProvider = ({ children }) => {
   const [lastNameError, setLastNameError] = useState("");
   const [bioError, setBioError] = useState("");
 
+  const [firstNameSuccess, setFirstNameSuccess] = useState(false);
+  const [lastNameSuccess, setLastNameSuccess] = useState(false);
+  const [bioSuccess, setBioSuccess] = useState(false);
+
   return (
     <ProfileFormContext.Provider
       value={{
@@ -30,6 +34,12 @@ export const ProfileFormProvider = ({ children }) => {
         setLastNameError,
         bioError,
         setBioError,
+        firstNameSuccess,
+        setFirstNameSuccess,
+        lastNameSuccess,
+        setLastNameSuccess,
+        bioSuccess,
+        setBioSuccess,
       }}
     >
       {children}

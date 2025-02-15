@@ -8,7 +8,7 @@ import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants";
 import { useAppStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { useAuthFormContext } from "@/context/authFormContext";
-
+import { toast } from "react-toastify";
 const Form = ({ isSignUpForm }) => {
   const {
     email,
@@ -133,6 +133,17 @@ const Form = ({ isSignUpForm }) => {
         { withCredentials: true }
       );
       if (res.data.user && res.data.user.id) {
+        toast.success("Login Successful!", {
+          position: "top-center",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          // transition: Bounce,
+        });
         setUserInfo(res.data.user);
       }
       if (res.data.user.profileSetup) {

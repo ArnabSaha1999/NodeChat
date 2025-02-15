@@ -13,5 +13,5 @@ export const ADD_PROFILE_AVATAR_ROUTE = `${AUTH_ROUTES}/add-profile-avatar`;
 export const UPDATE_PROFILE_AVATAR_ROUTE = `${AUTH_ROUTES}/update-profile-avatar`;
 export const REMOVE_PROFILE_AVATAR_ROUTE = `${AUTH_ROUTES}/remove-profile-avatar`;
 export const CHOOSE_THEME_PREFERENCE_ROUTE = `${AUTH_ROUTES}/choose-theme-preference`;
-export const UPDATE_PASSWORD_ROUTE = `${AUTH_ROUTES}/update-password`;
+export const UPDATE_PASSWORD_ROUTE = `${AUTH_ROUTES}/change-password`;
 export const LOGOUT_ROUTE = `${AUTH_ROUTES}/logout`;
