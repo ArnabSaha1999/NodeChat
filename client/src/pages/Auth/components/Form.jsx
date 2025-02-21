@@ -1,14 +1,23 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/apiClient";
 import { useEffect, useState } from "react";
-import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants";
 import { useAppStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { useAuthFormContext } from "@/context/authFormContext";
 import { toast } from "react-toastify";
+import Label from "@/components/Label";
+import FormError from "@/components/FormError";
+import PasswordToggle from "@/components/PasswordToggle";
+import InputContainer from "@/components/InputContainer";
+import PasswordInput from "@/components/PasswordInput";
+import PasswordInputContainer from "@/components/PasswordInputContainer";
+import BaseInput from "@/components/BaseInput";
+import {
+  validateConfirmPassword,
+  validateNewPassword,
+  validatePassword,
+} from "@/utils/validators/validatePasswords";
 const Form = ({ isSignUpForm }) => {
   const {
     email,
@@ -23,17 +32,30 @@ const Form = ({ isSignUpForm }) => {
     setPasswordError,
     confirmPasswordError,
     setConfirmPasswordError,
+    emailSuccess,
+    setEmailSuccess,
+    passwordSuccess,
+    setPasswordSuccess,
+    confirmPasswordSuccess,
+    setConfirmPasswordSuccess,
     loginError,
     setLoginError,
     isPasswordVisible,
     setIsPasswordVisible,
     isConfirmPasswordVisible,
     setIsConfirmPasswordVisible,
-    isFormSubmitted,
     setIsFormSubmitted,
   } = useAuthFormContext();
 
   const { setUserInfo } = useAppStore();
+
+  const [passwordErrors, setPasswordErrors] = useState({
+    length: [false, ""],
+    hasUppercase: [false, ""],
+    hasLowercase: [false, ""],
+    hasNumber: [false, ""],
+    hasSpecialChar: [false, ""],
+  });
 
   const navigate = useNavigate();
 
@@ -44,88 +66,71 @@ const Form = ({ isSignUpForm }) => {
     setEmailError("");
     setPasswordError("");
     setConfirmPasswordError("");
-    setIsFormSubmitted(false);
+    setEmailSuccess(false);
+    setPasswordSuccess(false);
+    setConfirmPasswordSuccess(false);
     setIsPasswordVisible(false);
     setIsConfirmPasswordVisible(false);
     setLoginError("");
   }, [isSignUpForm]);
 
   const validateEmail = (email) => {
+    const trimmedEmail = email.trim();
+    setEmailSuccess(false);
+    if (!trimmedEmail) {
+      setEmailError("Email is required!");
+      return false;
+    }
     const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return regex.test(email);
+    if (!regex.test(trimmedEmail)) {
+      setEmailError("Email should be valid!");
+      return false;
+    }
+    setEmailError("");
+    setEmailSuccess(true);
+    return true;
+  };
+
+  const handleLoginPassword = (password) => {
+    return validatePassword(password, setPasswordError, setPasswordSuccess);
+  };
+
+  const handleSignupPassword = (password) => {
+    return validateNewPassword(
+      password,
+      setPasswordError,
+      setPasswordSuccess,
+      setPasswordErrors
+    );
+  };
+
+  const handleConfirmPassword = (confirmPassword) => {
+    return validateConfirmPassword(
+      password,
+      confirmPassword,
+      setConfirmPasswordError,
+      setConfirmPasswordSuccess
+    );
   };
 
   const validateForm = () => {
     let isFormValid = true;
-    // Validate email
-    if (!email) {
-      setEmailError("Email is required!");
-      isFormValid = false;
-    } else if (!validateEmail(email)) {
-      setEmailError("Email should be valid!");
-      isFormValid = false;
-    } else {
-      setEmailError("");
-    }
-
-    // Validate password
-    if (!password) {
-      setPasswordError("Password is required!");
-      isFormValid = false;
-    } else if (password.length < 8) {
-      setPasswordError("Password must be at least 8 characters!");
-      isFormValid = false;
-    } else {
-      setPasswordError("");
-    }
-
-    // Validate confirm password (only if sign up form)
+    if (!validateEmail(email)) isFormValid = false;
     if (isSignUpForm) {
-      if (!confirmPassword) {
-        setConfirmPasswordError("Confirm password required!");
-        isFormValid = false;
-      } else if (password !== confirmPassword) {
-        setConfirmPasswordError("Passwords do not match!");
-        isFormValid = false;
-      } else {
-        setConfirmPasswordError("");
-      }
+      if (!handleSignupPassword(password)) isFormValid = false;
+      if (!handleConfirmPassword(confirmPassword)) isFormValid = false;
+    } else {
+      if (!handleLoginPassword(password)) isFormValid = false;
     }
     return isFormValid;
   };
 
-  // Handle changes without triggering validation on typing
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    if (isFormSubmitted) {
-      setEmailError(""); // Clear error after correcting the input
-    }
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-    if (isFormSubmitted) {
-      setPasswordError(""); // Clear error after correcting the input
-    }
-  };
-
-  const handleConfirmPasswordChange = (e) => {
-    setConfirmPassword(e.target.value);
-    if (isFormSubmitted) {
-      setConfirmPasswordError(""); // Clear error after correcting the input
-    }
-  };
-
   const handleLogin = async () => {
-    setIsFormSubmitted(true); // Set the form as submitted
-
     if (!validateForm()) {
       return;
     }
 
     setLoginError("");
-
-    setEmail(email.trim());
     try {
       const res = await apiClient.post(
         LOGIN_ROUTE,
@@ -167,11 +172,9 @@ const Form = ({ isSignUpForm }) => {
   };
 
   const handleSignUp = async () => {
-    setIsFormSubmitted(true); // Set the form as submitted
     if (!validateForm()) {
       return;
     }
-    setEmail(email.trim());
     try {
       const res = await apiClient.post(
         SIGNUP_ROUTE,
@@ -197,111 +200,94 @@ const Form = ({ isSignUpForm }) => {
   };
 
   return (
-    <div className="w-full my-5 relative">
-      {loginError && (
-        <p className="text-red-500 px-2 text-sm absolute top-0 translate-y-[-25px]">
-          Email or password incorrect!
-        </p>
-      )}
-      <div className={`${emailError ? "mb-10" : "mb-5"} relative`}>
-        <Label htmlFor="email" className="text-lg ml-2 text-gray-500">
-          Email
-        </Label>
-        <Input
+    <div className="w-full my-5 relative flex flex-col gap-5">
+      <FormError
+        error={loginError}
+        className="absolute top-0 translate-y-[-25px]"
+      />
+      <InputContainer fullWidth={true}>
+        <Label
           id="email"
-          type="email"
+          label="Email*"
+          error={emailError}
+          success={emailSuccess}
+        />
+        <BaseInput
+          id="email"
           value={email}
-          onChange={handleEmailChange}
+          setValue={setEmail}
+          error={emailError}
+          success={emailSuccess}
+          validateInput={validateEmail}
+          inputType="text"
           placeholder="Enter your email"
-          className={`px-4 py-6 bg-slate-200 rounded-full text-xl border-none outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 ${
-            emailError ? "outline-1 outline-red-800" : ""
-          }
-            ${
-              !emailError && email && validateEmail(email)
-                ? "outline-green-600 outline-1"
-                : ""
-            }`}
+          variant="rounded"
         />
-        {emailError && (
-          <p className="text-red-500 px-2 text-sm absolute top-full bottom-[-1.5rem] left-0">
-            {emailError}
-          </p>
-        )}
-      </div>
-      <div className={`${passwordError ? "mb-10" : "mb-5"} relative`}>
-        <Label htmlFor="password" className="text-lg ml-2 text-gray-500">
-          Password
-        </Label>
-        <Input
+        <FormError error={emailError} />
+      </InputContainer>
+      <InputContainer fullWidth={true}>
+        <Label
           id="password"
-          type={isPasswordVisible ? "text" : "password"}
-          value={password}
-          onChange={handlePasswordChange}
-          placeholder="Enter your password"
-          className={`px-4 py-6 bg-slate-200 rounded-full text-xl border-none outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 ${
-            passwordError ? "outline-1 outline-red-800" : ""
-          }
-            ${
-              !passwordError && password && password.length >= 8
-                ? "outline-green-600 outline-1"
-                : ""
-            }`}
+          label="Password*"
+          error={passwordError}
+          success={passwordSuccess}
         />
-        <button
-          onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-          className="absolute top-1/2 right-4 translate-y-[5px]"
-        >
-          {isPasswordVisible ? <IoEyeOutline /> : <IoEyeOffOutline />}
-        </button>
-
-        {passwordError && (
-          <p className="text-red-500 px-2 text-sm absolute top-full bottom-[-1.5rem] left-0">
-            {passwordError}
-          </p>
-        )}
-      </div>
-      {isSignUpForm && (
-        <div className={`${confirmPasswordError ? "mb-10" : "mb-5"} relative`}>
-          <Label
-            htmlFor="confirm-password"
-            className="text-lg ml-2 text-gray-500"
-          >
-            Confirm password
-          </Label>
-          <Input
-            id="confirm-password"
-            type={isConfirmPasswordVisible ? "text" : "password"}
-            placeholder="Confirm password"
-            value={confirmPassword}
-            onChange={handleConfirmPasswordChange}
-            className={`px-4 py-6 bg-slate-200 rounded-full text-xl border-none outline-none ring-0 focus:border-none focus:outline-none focus:ring-0 ${
-              confirmPasswordError ? "outline-1 outline-red-800" : ""
+        <PasswordInputContainer>
+          <PasswordInput
+            id="password"
+            value={password}
+            setValue={setPassword}
+            validateInput={
+              isSignUpForm ? handleSignupPassword : handleLoginPassword
             }
-              ${
-                !confirmPasswordError &&
-                confirmPassword &&
-                confirmPassword === password
-                  ? "outline-green-600 outline-1"
-                  : ""
-              }`}
+            error={passwordError}
+            success={passwordSuccess}
+            placeholder="Enter your password"
+            isPasswordVisible={isPasswordVisible}
+            variant="rounded"
           />
-          <button
-            onClick={() =>
-              setIsConfirmPasswordVisible(!isConfirmPasswordVisible)
-            }
-            className="absolute top-1/2 right-4 translate-y-[5px]"
-          >
-            {isConfirmPasswordVisible ? <IoEyeOutline /> : <IoEyeOffOutline />}
-          </button>
-          {confirmPasswordError && (
-            <p className="text-red-500 px-2 text-sm absolute top-full bottom-[-1.5rem] left-0">
-              {confirmPasswordError}
-            </p>
-          )}
-        </div>
+          <PasswordToggle
+            isPasswordVisible={isPasswordVisible}
+            setIsPasswordVisible={setIsPasswordVisible}
+          />
+        </PasswordInputContainer>
+
+        <FormError
+          error={passwordError}
+          errorList={isSignUpForm && passwordErrors}
+        />
+      </InputContainer>
+      {isSignUpForm && (
+        <InputContainer fullWidth={true}>
+          <Label
+            id="confirmPassword"
+            label="Confirm Password*"
+            error={confirmPasswordError}
+            success={confirmPasswordSuccess}
+          />
+          <PasswordInputContainer>
+            <PasswordInput
+              id="confirmPassword"
+              value={confirmPassword}
+              setValue={setConfirmPassword}
+              validateInput={handleConfirmPassword}
+              error={confirmPasswordError}
+              success={confirmPasswordSuccess}
+              isPasswordVisible={isConfirmPasswordVisible}
+              placeholder="Please confirm password"
+              variant="rounded"
+            />
+
+            <PasswordToggle
+              isPasswordVisible={isConfirmPasswordVisible}
+              setIsPasswordVisible={setIsConfirmPasswordVisible}
+            />
+          </PasswordInputContainer>
+          <FormError error={confirmPasswordError} />
+        </InputContainer>
       )}
 
-      <div className="flex justify-center items-center w-full mt-5">
+      <div className="flex justify-center items-center w-full">
         {isSignUpForm ? (
           <Button
             onClick={handleSignUp}

@@ -15,6 +15,10 @@ export const AuthFormProvider = ({ children }) => {
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
+  const [emailSuccess, setEmailSuccess] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+  const [confirmPasswordSuccess, setConfirmPasswordSuccess] = useState(false);
+
   const [loginError, setLoginError] = useState("");
 
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -38,6 +42,12 @@ export const AuthFormProvider = ({ children }) => {
         setPasswordError,
         confirmPasswordError,
         setConfirmPasswordError,
+        emailSuccess,
+        setEmailSuccess,
+        passwordSuccess,
+        setPasswordSuccess,
+        confirmPasswordSuccess,
+        setConfirmPasswordSuccess,
         loginError,
         setLoginError,
         isPasswordVisible,

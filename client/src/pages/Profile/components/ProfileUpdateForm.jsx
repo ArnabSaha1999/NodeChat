@@ -1,19 +1,25 @@
-import { Label } from "@/components/ui/label";
+import Label from "@/components/Label";
 import { useProfileFormContext } from "@/context/ProfileFormContext";
-import { useProfileUIContext } from "@/context/ProfileUIContext";
 import { apiClient } from "@/lib/apiClient";
 import { useAppStore } from "@/store";
 import { UPDATE_PROFILE } from "@/utils/constants";
-import EmojiPicker from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
-import { FaCheck, FaTimesCircle } from "react-icons/fa";
-import { FaCheckCircle } from "react-icons/fa";
-import { GrEmoji, GrRevert } from "react-icons/gr";
+import { FaCheck } from "react-icons/fa";
+import { GrRevert } from "react-icons/gr";
 import { toast } from "react-toastify";
 import GraphemeSplitter from "grapheme-splitter";
 import { MdEdit } from "react-icons/md";
 import { RiCloseLargeFill } from "react-icons/ri";
 import ProfileContentHeader from "@/components/profileComponents/ProfileContentHeader";
+import ButtonGroup from "@/components/profileComponents/ButtonGroup";
+import Button from "@/components/profileComponents/Button";
+import FormContainer from "@/components/profileComponents/FormContainer";
+import InputContainer from "@/components/InputContainer";
+import FormError from "@/components/FormError";
+import BaseInput from "@/components/BaseInput";
+import BioInput from "@/components/profileComponents/BioInput";
+import EmojiPickerButton from "@/components/EmojiPickerButton";
+import EmojiContainer from "@/components/EmojiPicker";
 
 const ProfileUpdateForm = () => {
   const { userInfo, setUserInfo } = useAppStore();
@@ -47,8 +53,6 @@ const ProfileUpdateForm = () => {
   const emojiRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
-
-  const { setIsSideBarOpen } = useProfileUIContext();
 
   const textAreaRef = useRef(null);
 
@@ -227,7 +231,6 @@ const ProfileUpdateForm = () => {
     setFirstNameSuccess(false);
     setLastNameSuccess(false);
     setBioSuccess(false);
-    setIsSideBarOpen(true);
     setRemainingCharacters(
       150 - (userInfo?.bio ? Splitter.splitGraphemes(userInfo.bio).length : 0)
     );
@@ -237,207 +240,88 @@ const ProfileUpdateForm = () => {
   return (
     <>
       <ProfileContentHeader header={"Profile Update"} />
-      <div className="bg-white dark:bg-black px-5 sm:px-2 py-10 rounded-xl drop-shadow-2xl flex flex-col gap-20 mt-10">
-        <div className="w-full flex flex-col xl:flex-col gap-10 xl:gap-10">
-          <div className="w-1/2 xl:w-full flex flex-col gap-2 relative">
-            <Label
-              htmlFor="firstName"
-              className="text-lg ml-2 text-gray-500 dark:text-white/70"
-            >
-              First Name*{" "}
-              {firstNameError ? (
-                <FaTimesCircle className="text-red-500 inline" />
-              ) : (
-                firstNameSuccess && (
-                  <FaCheckCircle className="text-green-500 inline" />
-                )
-              )}
-            </Label>
-            <input
-              disabled={!isEditing}
-              id="firstName"
-              autoComplete="off"
-              value={firstName}
-              onChange={(e) => {
-                setFirstName(e.target.value);
-                if (firstNameError || firstNameSuccess) {
-                  validateFirstName(e.target.value);
-                }
-              }}
-              onBlur={() => {
-                const trimmedFirstName = firstName.trim();
-                setFirstName(trimmedFirstName);
-                validateFirstName(trimmedFirstName);
-              }}
-              className={`px-7 py-5 bg-slate-200 dark:bg-gray-700 rounded-xl text-lg border-none outline-none ring-0 focus:outline-2  focus:outline-[#577BC1] dark:focus:outline-[#FFD700] ${
-                firstNameError
-                  ? "outline-red-500 focus:outline-red-500 dark:focus:outline-red-500"
-                  : firstNameSuccess &&
-                    "outline-green-500 focus:outline-green-500 dark:focus:outline-green-500"
-              } transition-all duration-300`}
-              type="text"
-              placeholder="Enter your First Name"
+      <FormContainer>
+        <InputContainer>
+          <Label
+            id="firstName"
+            label="First Name*"
+            error={firstNameError}
+            success={firstNameSuccess}
+          />
+          <BaseInput
+            id="firstName"
+            value={firstName}
+            setValue={setFirstName}
+            error={firstNameError}
+            success={firstNameSuccess}
+            validateInput={validateFirstName}
+            inputType="text"
+            placeholder={"Enter your first name"}
+            isEditing={isEditing}
+          />
+          <FormError error={firstNameError} />
+        </InputContainer>
+        <InputContainer>
+          <Label
+            id="lastName"
+            label="Last Name*"
+            error={lastNameError}
+            success={lastNameSuccess}
+          />
+          <BaseInput
+            id="lastName"
+            value={lastName}
+            setValue={setLastName}
+            error={lastNameError}
+            success={lastNameSuccess}
+            validateInput={validateLastName}
+            inputType="text"
+            placeholder={"Enter your last name"}
+            isEditing={isEditing}
+          />
+          <FormError error={lastNameError} />
+        </InputContainer>
+        <InputContainer>
+          <Label id="bio" label="Bio*" error={bioError} success={bioSuccess} />
+          <div className="relative">
+            <BioInput
+              id="bio"
+              ref={textAreaRef}
+              value={bio}
+              setValue={setBio}
+              error={bioError}
+              success={bioSuccess}
+              validateInput={validateBio}
+              placeholder="Write your bio (max 150 characters)"
+              Splitter={Splitter}
+              isEditing={isEditing}
+              setRemainingCharacters={setRemainingCharacters}
             />
-            {firstNameError && (
-              <p className="text-red-500 px-2 text-sm absolute bottom-[-30px] left-0">
-                {firstNameError}
-              </p>
-            )}
-          </div>
-          <div className="w-1/2 xl:w-full flex flex-col gap-2 relative">
-            <Label
-              htmlFor="lastName"
-              className="text-lg ml-2 text-gray-500 dark:text-white/70"
-            >
-              Last Name*{" "}
-              {lastNameError ? (
-                <FaTimesCircle className="text-red-500 inline" />
-              ) : (
-                lastNameSuccess && (
-                  <FaCheckCircle className="text-green-500 inline" />
-                )
-              )}
-            </Label>
-            <input
-              disabled={!isEditing}
-              id="lastName"
-              autoComplete="off"
-              value={lastName}
-              onChange={(e) => {
-                setLastName(e.target.value);
-                if (lastNameError || lastNameSuccess) {
-                  validateLastName(e.target.value);
-                }
-              }}
-              onBlur={() => {
-                const trimmedLastName = lastName.trim();
-                setLastName(trimmedLastName);
-                validateLastName(trimmedLastName);
-              }}
-              className={`px-7 py-5 bg-slate-200 dark:bg-gray-700 rounded-xl text-lg border-none outline-none ring-0 focus:outline-2  focus:outline-[#577BC1] dark:focus:outline-[#FFD700] ${
-                lastNameError
-                  ? "outline-red-500 focus:outline-red-500 dark:focus:outline-red-500"
-                  : lastNameSuccess &&
-                    "outline-green-500 focus:outline-green-500 dark:focus:outline-green-500"
-              } transition-all duration-300`}
-              type="text"
-              placeholder="Enter your Last Name"
-            />
-            {lastNameError && (
-              <p className="text-red-500 px-2 text-sm absolute bottom-[-30px] left-0">
-                {lastNameError}
-              </p>
-            )}
-          </div>
-          <div className="w-1/2 xl:w-full flex flex-col gap-2 relative">
-            <Label
-              htmlFor="bio"
-              className="text-lg ml-2 text-gray-500 dark:text-white/70"
-            >
-              Bio*{" "}
-              {bioError ? (
-                <FaTimesCircle className="text-red-500 inline" />
-              ) : (
-                bioSuccess && (
-                  <FaCheckCircle className="text-green-500 inline" />
-                )
-              )}
-            </Label>
-            <div className="relative">
-              <textarea
-                disabled={!isEditing}
-                ref={textAreaRef}
-                id="bio"
-                rows={1}
-                value={bio}
-                onChange={(e) => {
-                  const newBio = e.target.value;
-
-                  // Calculate the length of the bio including emojis as graphemes
-                  const bioLength = Splitter.splitGraphemes(newBio).length;
-
-                  // Only update the state if the bio length is <= 150
-                  if (bioLength <= 150) {
-                    setBio(newBio);
-                    setRemainingCharacters(150 - bioLength);
-
-                    // Validate bio if errors or success are present
-                    if (bioError || bioSuccess) {
-                      validateBio(newBio);
-                    }
-                  } else {
-                    // Optionally show feedback that user reached max length
-                    // e.g. setBio(newBio.substring(0, 150)); to trim the bio or just not update it
-                    setRemainingCharacters(0); // Show no remaining characters if over limit
-                  }
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex flex-col justify-center items-center gap-1">
+              <EmojiPickerButton
+                isEditing={isEditing}
+                onClick={() => {
+                  setIsEmojiPickerOpen(true);
                 }}
-                onBlur={() => {
-                  const trimmedBio = bio.trim();
-                  setBio(trimmedBio);
-                  validateBio(trimmedBio);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault(); // Prevents Enter key from adding new lines
-                  }
-                }}
-                className={`pl-7 pr-10 py-5 bg-slate-200 dark:bg-gray-700 rounded-xl text-lg border-none outline-none ring-0 focus:outline-2  focus:outline-[#577BC1] dark:focus:outline-[#FFD700] ${
-                  bioError
-                    ? "outline-red-500 focus:outline-red-500 dark:focus:outline-red-500"
-                    : bioSuccess &&
-                      "outline-green-500 focus:outline-green-500 dark:focus:outline-green-500"
-                } transition-all duration-300 resize-none w-full`}
-                placeholder="Write your bio (max 150 characters)"
               />
-              <div className="absolute right-1 top-1/2 transform -translate-y-1/2 flex flex-col justify-center items-center gap-1">
-                <button
-                  disabled={!isEditing}
-                  className={`text-2xl ${
-                    !isEditing
-                      ? "cursor-not-allowed opacity-50 pointer-events-none"
-                      : "hover:text-light hover:dark:text-dark"
-                  }`}
-                  onClick={() => {
-                    setIsEmojiPickerOpen(true);
-                  }}
-                >
-                  <GrEmoji />
-                </button>
-                {<div>{remainingCharacters}</div>}
-              </div>
-              <div
-                ref={emojiRef}
-                className="absolute mb-2 bottom-[100%] right-0 transition-all overflow-hidden"
-              >
-                <EmojiPicker
-                  className="overflow-hidden"
-                  autoFocusSearch={false}
-                  open={isEmojiPickerOpen}
-                  onEmojiClick={handleAddEmoji}
-                  theme={userInfo.themePreference}
-                />
-              </div>
+              {<div>{remainingCharacters}</div>}
             </div>
-            {bioError && (
-              <p className="text-red-500 px-2 text-sm absolute bottom-[-30px] left-0">
-                {bioError}
-              </p>
-            )}
+            <EmojiContainer
+              ref={emojiRef}
+              isEmojiPickerOpen={isEmojiPickerOpen}
+              handleAddEmoji={handleAddEmoji}
+              theme={userInfo.themePreference}
+            />
           </div>
-        </div>
-        <div className="flex flex-row sm:flex-col gap-2 w-1/2 xl:w-full text-lg">
+          <FormError error={bioError} />
+        </InputContainer>
+        <ButtonGroup>
           {!isEditing ? (
-            <button
-              onClick={handleEdit}
-              className=" py-3 w-full rounded-lg border-2 border-light dark:border-dark text-light dark:text-dark hover:bg-light dark:hover:bg-dark hover:text-white dark:hover:text-black flex items-center gap-2 justify-center transition-all duration-300"
-            >
+            <Button onClick={handleEdit} variant="primary">
               <MdEdit /> Edit Profile
-            </button>
+            </Button>
           ) : (
-            <button
-              onClick={handleUpdate}
-              className=" py-3 w-full rounded-lg border-2 border-light dark:border-dark text-light dark:text-dark hover:bg-light dark:hover:bg-dark hover:text-white dark:hover:text-black flex items-center gap-2 justify-center transition-all duration-300"
-            >
+            <Button onClick={handleUpdate} variant="primary">
               {isLoading ? (
                 "Updating..."
               ) : (
@@ -445,27 +329,21 @@ const ProfileUpdateForm = () => {
                   <FaCheck /> Update Profile
                 </>
               )}
-            </button>
+            </Button>
           )}
           {!isEditing ? (
-            <button
-              onClick={handleDiscardChange}
-              className="w-full bg-gray-300 text-gray-800 py-3 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-400 transition-all sm:w-full justify-center"
-            >
+            <Button onClick={handleDiscardChange} variant="secondary">
               <RiCloseLargeFill />
               Cancel
-            </button>
+            </Button>
           ) : (
-            <button
-              onClick={handleDiscardChange}
-              className="w-full bg-gray-300 text-gray-800 py-3 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-400 transition-all sm:w-full justify-center"
-            >
+            <Button onClick={handleDiscardChange} variant="secondary">
               <GrRevert />
               Discard Changes
-            </button>
+            </Button>
           )}
-        </div>
-      </div>
+        </ButtonGroup>
+      </FormContainer>
     </>
   );
 };

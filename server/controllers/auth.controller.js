@@ -3,7 +3,7 @@ import { jwtSecret } from "../environment.js";
 import User from "../models/user.model.js";
 import { compare, hash } from "bcrypt";
 import { v2 as cloudinary } from "cloudinary";
-import { validatePassword } from "../utils/validators/validatePassword.js";
+import { validateNewPassword } from "../utils/validators/validatePasswords.js";
 
 const maxAge = 3 * 24 * 60 * 60 * 1000;
 
@@ -393,7 +393,7 @@ export const changePassword = async (req, res, next) => {
         .send("Old password and new password are required!");
     }
 
-    const { isValid, validators } = validatePassword(newPassword);
+    const { isValid, validators } = validateNewPassword(newPassword);
 
     if (!isValid) {
       return res.status(400).send(validators);

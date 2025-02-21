@@ -75,39 +75,41 @@ function App() {
   };
 
   return (
-    <div className="w-full min-h-[100vh] bg-black/40 flex justify-center items-center">
+    <div className="min-w-[100vw] min-h-[100vh] bg-black/40 flex justify-center items-center">
       <BrowserRouter>
-        <Routes>
-          <Route
-            path="/auth/:formType"
-            element={
-              <AuthRoute>
-                <AuthFormProvider>
-                  <Auth />
-                </AuthFormProvider>
-              </AuthRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <PrivateRoute>
-                <ProfileUIProvider>
-                  <Profile />
-                </ProfileUIProvider>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/chat"
-            element={
-              <PrivateRoute>
-                <Chat />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/*" element={<Navigate to="/auth/login" />} />
-        </Routes>
+        <div className="flex justify-center items-center max-w-[1800px] w-full min-w-[330px]">
+          <Routes>
+            <Route
+              path="/auth/:formType"
+              element={
+                <AuthRoute>
+                  <AuthFormProvider>
+                    <Auth />
+                  </AuthFormProvider>
+                </AuthRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <PrivateRoute>
+                  <ProfileUIProvider>
+                    <Profile />
+                  </ProfileUIProvider>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/chat"
+              element={
+                <PrivateRoute>
+                  <Chat />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/*" element={<Navigate to="/auth/login" />} />
+          </Routes>
+        </div>
         <ToastContainer
           position="bottom-center"
           autoClose={5000}

@@ -1,4 +1,4 @@
-export const validatePassword = (password) => {
+export const validateNewPassword = (password) => {
   const validators = {
     length: [
       password.length >= 8 && password.length <= 15,

@@ -10,10 +10,10 @@ const ProfileContent = () => {
     useProfileUIContext();
   return (
     <div
-      className={`flex gap-10 flex-col w-[70vw] 2xl:w-[65vw] md:w-[100vw] min-h-[100vh] p-5 md:px-2 min-w-[330px] transition-all duration-300 relative bg-gray-200 dark:bg-zinc-800 ${
+      className={`flex gap-10 flex-col w-[70%] 2xl:w-[65%] md:w-full min-h-[100vh] p-5 md:px-2 transition-all duration-300 relative bg-gray-200 dark:bg-zinc-800 ${
         isSideBarOpen
-          ? "md:w-[0vw] md:translate-x-full"
-          : "md:w-[100vw] md:-translate-x-1/2"
+          ? "md:hidden" // When sidebar is active, content is hidden
+          : "" // When sidebar is toggled off, content slides in
       }`}
     >
       {isActive === "Account" && (

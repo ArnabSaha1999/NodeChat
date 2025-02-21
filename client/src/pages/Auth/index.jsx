@@ -1,6 +1,5 @@
 import AuthContainer from "./components/AuthContainer";
 import { Navigate, useParams } from "react-router-dom";
-import { useEffect } from "react";
 
 const Auth = () => {
   const { formType } = useParams();

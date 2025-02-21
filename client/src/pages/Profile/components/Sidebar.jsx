@@ -42,10 +42,10 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`flex flex-col justify-between w-[30vw] 2xl:w-[35vw] md:w-[100vw] border-r-2 dark:border-white/50 border-black/50 min-h-[100vh] transition-all duration-300 relative ${
+      className={`flex flex-col justify-between w-[30%] 2xl:w-[35%] md:w-full border-r-2 dark:border-white/50 border-black/50 min-h-[100vh] transition-all duration-300 relative ${
         isSideBarOpen
-          ? "md:w-[100vw] md:translate-x-1/2"
-          : "md:w-[0vw] md:-translate-x-full"
+          ? "" // Sidebar is active: full width, no translation
+          : "md:hidden" // Sidebar is hidden: 0 width and off-screen
       }`}
     >
       <div className="flex flex-col w-full my-10 gap-10 z-[100]">

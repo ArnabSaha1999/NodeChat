@@ -6,6 +6,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { GrRevert } from "react-icons/gr";
 import ThemePreview from "./ThemePreview";
+import ButtonGroup from "@/components/profileComponents/ButtonGroup";
+import Button from "@/components/profileComponents/Button";
 
 const Theme = () => {
   const { userInfo, setUserInfo } = useAppStore();
@@ -80,22 +82,24 @@ const Theme = () => {
 
         {/* Buttons */}
         <div className="w-full flex flex-row justify-center items-center">
-          <div className="flex flex-row sm:flex-col gap-2 w-1/2 xl:w-full text-lg justify-center items-center">
-            <button
+          <ButtonGroup>
+            <Button
+              disabled={tempTheme === userInfo.themePreference}
               onClick={() => applyTheme(tempTheme)}
-              className="py-3 w-full rounded-lg border-2 border-light dark:border-dark text-light dark:text-dark hover:bg-light dark:hover:bg-dark hover:text-white dark:hover:text-black flex items-center gap-2 justify-center transition-all duration-300"
+              variant="primary"
             >
               <FaCheck />
               Apply Theme
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleDiscardChange}
-              className="w-full bg-gray-300 text-gray-800 py-3 rounded-lg font-medium flex items-center gap-2 hover:bg-gray-400 transition-all sm:w-full justify-center"
+              variant="secondary"
+              disabled={tempTheme === userInfo.themePreference}
             >
               <GrRevert />
               Discard Changes
-            </button>
-          </div>
+            </Button>
+          </ButtonGroup>
         </div>
       </div>
     </>

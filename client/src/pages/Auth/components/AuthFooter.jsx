@@ -9,17 +9,17 @@ const AuthFooter = ({ isSignUpForm }) => {
     navigate(`/auth/${toggleFormType}`);
   };
   return (
-    <div className="flex flex-col justify-center items-center">
+    <div className="flex flex-row justify-center items-center">
       <p>
         {isSignUpForm ? "Already have an account?" : "Don't have an account?"}
-        <Button
-          onClick={handleFormChange}
-          className="text-xl px-2 hover:no-underline"
-          variant="link"
-        >
-          {isSignUpForm ? "Sign In" : "Sign Up"}
-        </Button>
       </p>
+      <Button
+        onClick={handleFormChange}
+        className="text-xl px-2 hover:no-underline"
+        variant="link"
+      >
+        {isSignUpForm ? "Sign In" : "Sign Up"}
+      </Button>
     </div>
   );
 };

@@ -40,9 +40,9 @@ const ThemePreview = ({ theme, isSelected, onClick }) => {
           {/* Sent Message */}
         </div>
         <div
-          className={`h-[15%] ${
-            isDark ? "bg-gray-700" : "border-gray-300"
-          } border-t  rounded-md`}
+          className={`h-[15%] shadow-xl ${
+            isDark ? "bg-gray-700 border-dark" : "bg-gray-300 border-light"
+          } border-b border-t rounded-md`}
         ></div>{" "}
         {/* Input Box */}
       </div>

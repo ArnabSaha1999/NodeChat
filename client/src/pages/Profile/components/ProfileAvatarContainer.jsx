@@ -152,18 +152,18 @@ const ProfileAvatarContainer = () => {
   };
 
   useEffect(() => {
-    if (isAvatarContainerOpen) {
-      const modalElement = avatarContainerRef.current;
-      if (modalElement) {
-        modalElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center", // Center the modal in the viewport
-        });
-      }
-      document.body.style.overflow = "hidden"; // Disable scrolling on the background
-    } else {
-      document.body.style.overflow = ""; // Re-enable scrolling on the background
-    }
+    // if (isAvatarContainerOpen) {
+    //   const modalElement = avatarContainerRef.current;
+    //   if (modalElement) {
+    //     modalElement.scrollIntoView({
+    //       behavior: "smooth",
+    //       block: "center", // Center the modal in the viewport
+    //     });
+    //   }
+    //   document.body.style.overflow = "hidden"; // Disable scrolling on the background
+    // } else {
+    //   document.body.style.overflow = ""; // Re-enable scrolling on the background
+    // }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
@@ -186,11 +186,11 @@ const ProfileAvatarContainer = () => {
   return (
     <div
       autoFocus
-      className="w-[100vw] h-[100vh] z-[9999] bg-white/70 dark:bg-black/70 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center"
+      className="min-w-[100vw] min-h-[100vh] z-[9999] bg-white/70 dark:bg-black/70 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center"
     >
       <div
         ref={avatarContainerRef}
-        className="md:w-[100vw] md:h-[100vh] w-[500px] min-w-[330px] flex flex-col justify-between absolute z-[10000] bg-white dark:bg-slate-800 shadow-2xl rounded-2xl gap-10 px-5 py-10"
+        className=" md:h-full md:w-full w-[500px] min-w-[330px] flex flex-col justify-between absolute z-[10000] bg-white dark:bg-slate-800 shadow-2xl rounded-2xl gap-10 px-5 py-10"
       >
         <div className="flex flex-col gap-5">
           <div className="flex flex-row justify-between items-center">
