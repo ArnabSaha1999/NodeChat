@@ -245,7 +245,7 @@ const AuthForm = ({ isSignUpForm }) => {
         </InputContainer>
       )}
       <FormError error={loginError} />
-      <ButtonGroup>
+      <ButtonGroup fullWidth={true}>
         <Button
           onClick={isSignUpForm ? handleSignUp : handleLogin}
           variant="auth"
