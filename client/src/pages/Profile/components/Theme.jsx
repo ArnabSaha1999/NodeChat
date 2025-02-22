@@ -8,6 +8,7 @@ import { GrRevert } from "react-icons/gr";
 import ThemePreview from "./ThemePreview";
 import ButtonGroup from "@/components/profileComponents/ButtonGroup";
 import Button from "@/components/profileComponents/Button";
+import { showErrorToast, showSuccessToast } from "@/utils/toastNotifications";
 
 const Theme = () => {
   const { userInfo, setUserInfo } = useAppStore();
@@ -51,10 +52,16 @@ const Theme = () => {
         }
       );
       if (res.status === 200 && res.data?.user) {
+        showSuccessToast(
+          `${
+            tempTheme.charAt(0).toUpperCase() + tempTheme.slice(1)
+          } theme applied Successfully!`
+        );
         setUserInfo({ ...res.data.user });
       }
     } catch (error) {
-      console.log(error);
+      console.error("Theme changed failed:", error);
+      showErrorToast("Failed to apply theme! Please try again!");
     }
   };
 
