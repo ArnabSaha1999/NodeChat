@@ -1,3 +1,4 @@
+import { usePasswordValidation } from "@/hooks/usePasswordValidation";
 import { createContext, useContext, useState } from "react";
 
 const ChangePasswordContext = createContext();
@@ -25,13 +26,7 @@ export const ChangePasswordProvider = ({ children }) => {
   const [isConfirmNewPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
 
-  const [passwordErrors, setPasswordErrors] = useState({
-    length: [false, ""],
-    hasUppercase: [false, ""],
-    hasLowercase: [false, ""],
-    hasNumber: [false, ""],
-    hasSpecialChar: [false, ""],
-  });
+  const { passwordErrors, setPasswordErrors } = usePasswordValidation();
 
   const resetForm = () => {
     setOldPassword("");

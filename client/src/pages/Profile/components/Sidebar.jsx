@@ -1,5 +1,3 @@
-import React, { useState } from "react";
-
 import {
   RiAccountCircleFill,
   RiLockPasswordFill,
@@ -11,12 +9,11 @@ import ProfileButton from "./ProfileButton";
 import ProfileAvatar from "./ProfileAvatar";
 import { useProfileUIContext } from "@/context/ProfileUIContext";
 import { ProfileAvatarContextProvider } from "@/context/ProfileAvatarContext";
-import ModalContainer from "./ProfileAvatarContainer";
-import { LogOut } from "lucide-react";
 import { apiClient } from "@/lib/apiClient";
 import { LOGOUT_ROUTE } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
 import { useAppStore } from "@/store";
+import { showErrorToast, showSuccessToast } from "@/utils/toastNotifications";
 
 const Sidebar = () => {
   const { setUserInfo } = useAppStore();
@@ -32,11 +29,13 @@ const Sidebar = () => {
       );
 
       if (res.status === 200) {
-        navigate("/auth/login");
+        showSuccessToast("Successfully logged out!");
         setUserInfo(null);
+        navigate("/auth/login");
       }
     } catch (error) {
-      console.log({ error });
+      console.error("Logout failed:", error);
+      showErrorToast("An error occurred while logging out. Please try again.");
     }
   };
 

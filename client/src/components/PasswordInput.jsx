@@ -25,14 +25,16 @@ const PasswordInput = ({
         (error || success) && validateInput(e.target.value);
       }}
       onBlur={() => validateInput(value)}
-      className={`w-full px-7 py-3 bg-slate-200 dark:bg-gray-700 text-lg transition-all duration-300 border-none outline-none ring-0 ${
-        variant === "rounded" ? "rounded-full" : "rounded-xl"
+      className={`w-full px-7 py-3 bg-slate-200 dark:bg-gray-700 text-lg transition-all duration-300 border-none outline-none ring-0 focus:outline-2 ${
+        variant === "auth" ? "rounded-full" : "rounded-xl"
       } ${
         error
           ? "outline-red-500 focus:outline-red-500 dark:focus:outline-red-500"
           : success
           ? "outline-green-500 focus:outline-green-500 dark:focus:outline-green-500"
-          : "focus:outline-2 focus:outline-light dark:focus:outline-dark"
+          : variant === "auth"
+          ? "focus:outline-black"
+          : "focus:outline-light dark:focus:outline-dark"
       }`}
       placeholder={placeholder}
     />

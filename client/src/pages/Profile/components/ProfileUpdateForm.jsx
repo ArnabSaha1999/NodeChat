@@ -20,6 +20,8 @@ import BaseInput from "@/components/BaseInput";
 import BioInput from "@/components/profileComponents/BioInput";
 import EmojiPickerButton from "@/components/EmojiPickerButton";
 import EmojiContainer from "@/components/EmojiPicker";
+import { validateInput } from "@/utils/validators/validateInputFields";
+import { showErrorToast, showSuccessToast } from "@/utils/toastNotifications";
 
 const ProfileUpdateForm = () => {
   const { userInfo, setUserInfo } = useAppStore();
@@ -89,72 +91,44 @@ const ProfileUpdateForm = () => {
     return () => observer.disconnect();
   }, []);
 
-  const validateFirstName = (firstName) => {
-    const trimmedFirstName = firstName.trim();
-    setFirstNameSuccess(false);
-    if (!trimmedFirstName) {
-      setFirstNameError("First name is required!");
-      return false;
-    }
-    if (trimmedFirstName.length > 50) {
-      setFirstNameError("First name cannot exceed 50 character!");
-      return false;
-    }
-
-    setFirstNameError("");
-    setFirstNameSuccess(true);
-    return true;
+  const handleFirstName = (firstName) => {
+    return validateInput({
+      field: "First name",
+      value: firstName,
+      maxLength: 50,
+      setError: setFirstNameError,
+      setSuccess: setFirstNameSuccess,
+    });
   };
 
-  const validateLastName = (lastName) => {
-    const trimmedLastName = lastName.trim();
-    setLastNameSuccess(false);
-    if (!trimmedLastName) {
-      setLastNameError("Last name is required!");
-      return false;
-    }
-    if (trimmedLastName.length > 50) {
-      setLastNameError("Last name cannot exceed 50 character!");
-      return false;
-    }
-    setLastNameError("");
-    setLastNameSuccess(true);
-    return true;
+  const handleLastName = (lastName) => {
+    return validateInput({
+      field: "Last name",
+      value: lastName,
+      maxLength: 50,
+      setError: setLastNameError,
+      setSuccess: setLastNameSuccess,
+    });
   };
 
-  const validateBio = (bio) => {
-    const trimmedBio = bio.trim();
-    const graphemeLength = Splitter.splitGraphemes(trimmedBio).length;
-    setBioSuccess(false);
-    if (!trimmedBio) {
-      setBioError("Please tell us about you!");
-      return false;
-    }
-    if (graphemeLength < 10) {
-      setBioError("Bio must be at least 10 characters long!");
-      return false;
-    }
-    if (graphemeLength > 150) {
-      setBioError("Bio cannot exceed 150 characters!");
-      return false;
-    }
-
-    setBioError("");
-    setBioSuccess(true);
-    return true;
+  const handleBio = (bio) => {
+    return validateInput({
+      field: "Bio",
+      value: bio,
+      minLength: 10,
+      maxLength: 150,
+      setError: setBioError,
+      setSuccess: setBioSuccess,
+      Splitter,
+    });
   };
 
   const validateForm = () => {
-    let isFormValid = true;
-
-    const isFirstNameValid = validateFirstName(firstName);
-    if (!isFirstNameValid) isFormValid = false;
-    const isLastNameValid = validateLastName(lastName);
-    if (!isLastNameValid) isFormValid = false;
-    const isBioValid = validateBio(bio);
-    if (!isBioValid) isFormValid = false;
-
-    return isFormValid;
+    return [
+      handleFirstName(firstName),
+      handleLastName(lastName),
+      handleBio(bio),
+    ].every(Boolean);
   };
 
   const handleAddEmoji = (emoji) => {
@@ -199,23 +173,12 @@ const ProfileUpdateForm = () => {
       );
       if (res.status === 200 && res.data?.user) {
         setUserInfo({ ...res.data.user });
-        if (res.status === 200) {
-          toast.success("Profile updated successfully!", {
-            position: "top-center",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: false,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "colored",
-            // transition: Bounce,
-          });
-          // navigate("/chat");
-        }
+        showSuccessToast("Profile updated successfully!");
+        // navigate("/chat");
       }
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
+      showErrorToast("Something went wrong! Please try again!");
     } finally {
       setIsLoading(false);
     }
@@ -254,7 +217,7 @@ const ProfileUpdateForm = () => {
             setValue={setFirstName}
             error={firstNameError}
             success={firstNameSuccess}
-            validateInput={validateFirstName}
+            validateInput={handleFirstName}
             inputType="text"
             placeholder={"Enter your first name"}
             isEditing={isEditing}
@@ -274,7 +237,7 @@ const ProfileUpdateForm = () => {
             setValue={setLastName}
             error={lastNameError}
             success={lastNameSuccess}
-            validateInput={validateLastName}
+            validateInput={handleLastName}
             inputType="text"
             placeholder={"Enter your last name"}
             isEditing={isEditing}
@@ -291,7 +254,7 @@ const ProfileUpdateForm = () => {
               setValue={setBio}
               error={bioError}
               success={bioSuccess}
-              validateInput={validateBio}
+              validateInput={handleBio}
               placeholder="Write your bio (max 150 characters)"
               Splitter={Splitter}
               isEditing={isEditing}

@@ -1,3 +1,4 @@
+import { usePasswordValidation } from "@/hooks/usePasswordValidation";
 import { createContext, useContext, useState } from "react";
 
 const AuthFormContext = createContext();
@@ -25,7 +26,22 @@ export const AuthFormProvider = ({ children }) => {
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
 
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+  const { passwordErrors, setPasswordErrors } = usePasswordValidation();
+
+  const resetForm = () => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setEmailError("");
+    setPasswordError("");
+    setConfirmPasswordError("");
+    setEmailSuccess(false);
+    setPasswordSuccess(false);
+    setConfirmPasswordSuccess(false);
+    setIsPasswordVisible(false);
+    setIsConfirmPasswordVisible(false);
+    setLoginError("");
+  };
 
   return (
     <AuthFormContext.Provider
@@ -54,8 +70,9 @@ export const AuthFormProvider = ({ children }) => {
         setIsPasswordVisible,
         isConfirmPasswordVisible,
         setIsConfirmPasswordVisible,
-        isFormSubmitted,
-        setIsFormSubmitted,
+        passwordErrors,
+        setPasswordErrors,
+        resetForm,
       }}
     >
       {children}

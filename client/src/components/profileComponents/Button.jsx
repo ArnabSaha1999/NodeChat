@@ -6,15 +6,24 @@ const Button = ({
   ...props
 }) => {
   const baseClasses =
-    "py-3 w-full rounded-lg  flex items-center gap-2 justify-center transition-all duration-300";
+    "py-3 w-full flex items-center gap-2 justify-center transition-all duration-300";
 
   const primaryClasses =
-    "border-2 border-light dark:border-dark text-light dark:text-dark hover:bg-light dark:hover:bg-dark hover:text-white dark:hover:text-black";
+    "border-2 border-light dark:border-dark text-light dark:text-dark hover:bg-light dark:hover:bg-dark hover:text-white dark:hover:text-black rounded-lg";
 
-  const secondaryClasses = "bg-gray-300 text-gray-800 hover:bg-gray-400";
+  const secondaryClasses =
+    "bg-gray-300 text-gray-800 hover:bg-gray-400 rounded-lg";
+
+  const authClasses = "bg-black text-white hover:bg-black/80 rounded-full";
 
   const variantClasses =
-    variant === "primary" ? primaryClasses : secondaryClasses;
+    variant === "primary"
+      ? primaryClasses
+      : variant === "secondary"
+      ? secondaryClasses
+      : variant === "auth"
+      ? authClasses
+      : "";
 
   return (
     <button

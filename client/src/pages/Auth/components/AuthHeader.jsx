@@ -1,5 +1,5 @@
 import Logo from "@/components/Logo";
-const AuthHeader = ({ isSignUpForm }) => {
+const AuthHeader = () => {
   return <Logo />;
 };
 

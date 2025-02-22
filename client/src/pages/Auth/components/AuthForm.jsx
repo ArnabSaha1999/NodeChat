@@ -1,11 +1,9 @@
-import { Button } from "@/components/ui/button";
 import { apiClient } from "@/lib/apiClient";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { LOGIN_ROUTE, SIGNUP_ROUTE } from "@/utils/constants";
 import { useAppStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { useAuthFormContext } from "@/context/authFormContext";
-import { toast } from "react-toastify";
 import Label from "@/components/Label";
 import FormError from "@/components/FormError";
 import PasswordToggle from "@/components/PasswordToggle";
@@ -18,7 +16,11 @@ import {
   validateNewPassword,
   validatePassword,
 } from "@/utils/validators/validatePasswords";
-const Form = ({ isSignUpForm }) => {
+import { validateInput } from "@/utils/validators/validateInputFields";
+import Button from "@/components/profileComponents/Button";
+import ButtonGroup from "@/components/profileComponents/ButtonGroup";
+import { showErrorToast, showSuccessToast } from "@/utils/toastNotifications";
+const AuthForm = ({ isSignUpForm }) => {
   const {
     email,
     setEmail,
@@ -44,51 +46,26 @@ const Form = ({ isSignUpForm }) => {
     setIsPasswordVisible,
     isConfirmPasswordVisible,
     setIsConfirmPasswordVisible,
-    setIsFormSubmitted,
+    passwordErrors,
+    setPasswordErrors,
+    resetForm,
   } = useAuthFormContext();
 
   const { setUserInfo } = useAppStore();
 
-  const [passwordErrors, setPasswordErrors] = useState({
-    length: [false, ""],
-    hasUppercase: [false, ""],
-    hasLowercase: [false, ""],
-    hasNumber: [false, ""],
-    hasSpecialChar: [false, ""],
-  });
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-    setEmailError("");
-    setPasswordError("");
-    setConfirmPasswordError("");
-    setEmailSuccess(false);
-    setPasswordSuccess(false);
-    setConfirmPasswordSuccess(false);
-    setIsPasswordVisible(false);
-    setIsConfirmPasswordVisible(false);
-    setLoginError("");
+    resetForm();
   }, [isSignUpForm]);
 
-  const validateEmail = (email) => {
-    const trimmedEmail = email.trim();
-    setEmailSuccess(false);
-    if (!trimmedEmail) {
-      setEmailError("Email is required!");
-      return false;
-    }
-    const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!regex.test(trimmedEmail)) {
-      setEmailError("Email should be valid!");
-      return false;
-    }
-    setEmailError("");
-    setEmailSuccess(true);
-    return true;
+  const handleEmail = (email) => {
+    return validateInput({
+      field: "Email",
+      value: email,
+      setError: setEmailError,
+      setSuccess: setEmailSuccess,
+    });
   };
 
   const handleLoginPassword = (password) => {
@@ -114,15 +91,13 @@ const Form = ({ isSignUpForm }) => {
   };
 
   const validateForm = () => {
-    let isFormValid = true;
-    if (!validateEmail(email)) isFormValid = false;
-    if (isSignUpForm) {
-      if (!handleSignupPassword(password)) isFormValid = false;
-      if (!handleConfirmPassword(confirmPassword)) isFormValid = false;
-    } else {
-      if (!handleLoginPassword(password)) isFormValid = false;
-    }
-    return isFormValid;
+    return [
+      handleEmail(email),
+      isSignUpForm
+        ? handleSignupPassword(password)
+        : handleLoginPassword(password),
+      isSignUpForm ? handleConfirmPassword(confirmPassword) : true,
+    ].every(Boolean);
   };
 
   const handleLogin = async () => {
@@ -138,35 +113,22 @@ const Form = ({ isSignUpForm }) => {
         { withCredentials: true }
       );
       if (res.data.user && res.data.user.id) {
-        toast.success("Login Successful!", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          // transition: Bounce,
-        });
+        showSuccessToast("Login Successful!");
         setUserInfo(res.data.user);
       }
-      if (res.data.user.profileSetup) {
-        navigate("/chat");
-      } else {
-        navigate("/profile");
-      }
+      navigate(res.data.user.profileSetup ? "/chat" : "/profile");
     } catch (error) {
       if (error.response) {
         console.log("API Error: ", error.response.data);
         if (error.response.status === 404) {
           setLoginError("Email or password is incorrect!");
         } else {
-          setLoginError("An error occurred! Please try again!");
+          console.error(error.response);
+          showErrorToast("An error occurred! please try again!");
         }
       } else {
-        console.log("Network or unexpected error: ", error);
-        setLoginError("Unexpected error! Please try again!");
+        console.error({ error });
+        showErrorToast("Unexpected error! Please try again!");
       }
     }
   };
@@ -182,29 +144,25 @@ const Form = ({ isSignUpForm }) => {
         { withCredentials: true }
       );
       if (res.status === 201) {
+        showSuccessToast("Account created successfully!");
         setUserInfo(res.data.user);
         navigate("/profile");
       }
     } catch (error) {
-      console.log(error.response.data);
       if (error.response && error.response.status === 400) {
         if (error.response.data === "Email is already taken!") {
           setEmailError("Email is already taken!");
-        } else {
-          console.log(error.response.data);
+          setEmailSuccess(false);
         }
       } else {
-        console.log({ error });
+        console.error({ error });
+        showErrorToast("An Error occurred during sign-up!");
       }
     }
   };
 
   return (
     <div className="w-full my-5 relative flex flex-col gap-5">
-      <FormError
-        error={loginError}
-        className="absolute top-0 translate-y-[-25px]"
-      />
       <InputContainer fullWidth={true}>
         <Label
           id="email"
@@ -218,10 +176,10 @@ const Form = ({ isSignUpForm }) => {
           setValue={setEmail}
           error={emailError}
           success={emailSuccess}
-          validateInput={validateEmail}
+          validateInput={handleEmail}
           inputType="text"
           placeholder="Enter your email"
-          variant="rounded"
+          variant="auth"
         />
         <FormError error={emailError} />
       </InputContainer>
@@ -244,7 +202,7 @@ const Form = ({ isSignUpForm }) => {
             success={passwordSuccess}
             placeholder="Enter your password"
             isPasswordVisible={isPasswordVisible}
-            variant="rounded"
+            variant="auth"
           />
           <PasswordToggle
             isPasswordVisible={isPasswordVisible}
@@ -275,7 +233,7 @@ const Form = ({ isSignUpForm }) => {
               success={confirmPasswordSuccess}
               isPasswordVisible={isConfirmPasswordVisible}
               placeholder="Please confirm password"
-              variant="rounded"
+              variant="auth"
             />
 
             <PasswordToggle
@@ -286,26 +244,17 @@ const Form = ({ isSignUpForm }) => {
           <FormError error={confirmPasswordError} />
         </InputContainer>
       )}
-
-      <div className="flex justify-center items-center w-full">
-        {isSignUpForm ? (
-          <Button
-            onClick={handleSignUp}
-            className="w-full mt-5 py-6 rounded-full"
-          >
-            Sign Up
-          </Button>
-        ) : (
-          <Button
-            onClick={handleLogin}
-            className="w-full mt-5 py-6 rounded-full"
-          >
-            Sign In
-          </Button>
-        )}
-      </div>
+      <FormError error={loginError} />
+      <ButtonGroup>
+        <Button
+          onClick={isSignUpForm ? handleSignUp : handleLogin}
+          variant="auth"
+        >
+          {isSignUpForm ? "Sign Up" : "Sign In"}
+        </Button>
+      </ButtonGroup>
     </div>
   );
 };
 
-export default Form;
+export default AuthForm;

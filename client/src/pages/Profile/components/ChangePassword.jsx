@@ -19,6 +19,7 @@ import InputContainer from "@/components/InputContainer";
 import PasswordToggle from "@/components/PasswordToggle";
 import PasswordInputContainer from "@/components/PasswordInputContainer";
 import FormError from "@/components/FormError";
+import { showErrorToast, showSuccessToast } from "@/utils/toastNotifications";
 
 const ChangePassword = () => {
   const {
@@ -78,13 +79,11 @@ const ChangePassword = () => {
   };
 
   const validateForm = () => {
-    let isFormValid = true;
-
-    if (!handleOldPassword(oldPassword)) isFormValid = false;
-    if (!handleNewPassword(newPassword)) isFormValid = false;
-    if (!handleConfirmPassword(confirmNewPassword)) isFormValid = false;
-
-    return isFormValid;
+    return [
+      handleOldPassword(oldPassword),
+      handleNewPassword(newPassword),
+      handleConfirmPassword(confirmNewPassword),
+    ].every(Boolean);
   };
 
   const handleDiscardChange = () => {
@@ -102,27 +101,16 @@ const ChangePassword = () => {
         { withCredentials: true }
       );
       if (res.status === 200) {
-        toast.success("Password Changed Successfully!", {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          // transition: Bounce,
-        });
-        console.log("Password updated successfully!");
+        showSuccessToast("Password changed successfully!");
         resetForm();
       }
     } catch (error) {
-      if (error.status === 400 && error.response) {
+      if (error.response && error.response.status === 400) {
         setOldPasswordError(error.response.data.oldPasswordError);
         setOldPasswordSuccess(false);
       }
-      console.log({ error });
-      console.log("Something went wrong!");
+      console.error(error);
+      showErrorToast("Something went wrong! Please try again!");
     }
   };
 
