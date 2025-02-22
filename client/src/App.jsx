@@ -75,7 +75,7 @@ function App() {
   };
 
   return (
-    <div className="min-w-[100vw] min-h-[100vh] bg-black/40 flex justify-center items-center">
+    <div className="min-w-[100vw] min-h-[100vh] bg-black/40 flex justify-center items-center overflow-hidden">
       <BrowserRouter>
         <div className="flex justify-center items-center max-w-[1800px] w-full min-w-[330px]">
           <Routes>

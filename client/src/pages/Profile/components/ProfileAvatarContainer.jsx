@@ -1,4 +1,4 @@
-import { MdEdit, MdModeEdit } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 import { TbTrashXFilled } from "react-icons/tb";
 import { IoClose } from "react-icons/io5";
 import { MdAddAPhoto } from "react-icons/md";
@@ -16,6 +16,7 @@ import {
 } from "@/utils/constants";
 import { apiClient } from "@/lib/apiClient";
 import { AvatarFallback } from "@/components/ui/avatar";
+import Logo from "@/components/Logo";
 
 const ProfileAvatarContainer = () => {
   const { userInfo, setUserInfo } = useAppStore();
@@ -201,13 +202,7 @@ const ProfileAvatarContainer = () => {
               <IoClose />
             </div>
 
-            <div className="flex gap-3 justify-end items-center text-3xl font-semibold">
-              <img className="w-[40px] h-[40px]" src={NodeChat_Logo} alt="" />
-              <div>
-                <span className="text-orange-500">Node</span>
-                <span className="text-teal-700">Chat</span>
-              </div>
-            </div>
+            <Logo />
           </div>
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl">Profile Picture</h1>

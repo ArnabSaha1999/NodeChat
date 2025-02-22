@@ -61,7 +61,7 @@ const Theme = () => {
   return (
     <>
       <ProfileContentHeader header={"Choose Your Theme"} />
-      <div className="w-full flex flex-col justify-center items-center mt-10">
+      <div className="w-full flex flex-col justify-center items-center mt-20">
         <div className="w-full mb-10 flex flex-col gap-5 justify-center items-center">
           <p className="text-2xl sm:text-lg">
             Select the theme that suits you best.

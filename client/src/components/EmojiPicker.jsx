@@ -6,7 +6,7 @@ const EmojiContainer = forwardRef(
     return (
       <div
         ref={ref}
-        className="absolute mb-2 bottom-[100%] right-0 transition-all overflow-hidden"
+        className="absolute mb-0 bottom-[100%] right-0 transition-all overflow-hidden"
       >
         <EmojiPicker
           className="overflow-hidden"

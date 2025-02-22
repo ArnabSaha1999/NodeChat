@@ -3,7 +3,7 @@ const ThemePreview = ({ theme, isSelected, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer p-6 sm:px-3 rounded-2xl shadow-lg transition-all w-full h-[60vh] xl:h-[55vh] sm:h-[50vh]  hover:shadow-2xl hover:scale-105
+      className={`cursor-pointer p-6 pb-10 sm:px-3 rounded-2xl shadow-lg transition-all w-full h-full flex flex-col gap-5 hover:shadow-2xl hover:scale-105
           ${
             isSelected
               ? `border-[4px] ${isDark ? "border-dark" : "border-light"}`
@@ -11,12 +11,12 @@ const ThemePreview = ({ theme, isSelected, onClick }) => {
           } ${isDark ? "bg-gray-900" : "bg-white"}`}
     >
       <div
-        className={`w-full h-3/4 mb-4 flex flex-col p-3 ${
+        className={`w-full mb-4 flex flex-col p-3 gap-5 ${
           isDark ? "bg-gray-800" : "bg-gray-100"
         } rounded-xl`}
       >
         <div
-          className={`h-[15%] ${
+          className={`h-12 ${
             isDark ? "bg-dark" : "bg-light"
           }  w-full rounded-md mb-2`}
         ></div>{" "}
@@ -40,26 +40,30 @@ const ThemePreview = ({ theme, isSelected, onClick }) => {
           {/* Sent Message */}
         </div>
         <div
-          className={`h-[15%] shadow-xl ${
+          className={`h-12 shadow-xl ${
             isDark ? "bg-gray-700 border-dark" : "bg-gray-300 border-light"
-          } border-b border-t rounded-md`}
+          } border-b rounded-md`}
         ></div>{" "}
         {/* Input Box */}
       </div>
-      <h3
-        className={`text-2xl xl:text-xl sm:text-lg font-semibold ${
-          isDark ? "text-gray-200" : "text-gray-800"
-        }`}
-      >
-        {isDark ? "Dark Mode" : "Light Mode"}
-      </h3>
-      <p
-        className={`${
-          isDark ? "text-gray-400" : "text-gray-600"
-        } text-xl xl:text-lg sm:text-sm`}
-      >
-        {isDark ? "Sleek and easy on the eyes!" : "Bright and clear!"}
-      </p>
+      <div>
+        <h3
+          className={`text-2xl xl:text-xl sm:text-lg font-semibold ${
+            isDark ? "text-gray-200" : "text-gray-800"
+          }`}
+        >
+          {isDark ? "Dark Mode" : "Light Mode"}
+        </h3>
+        <p
+          className={`${
+            isDark ? "text-gray-400" : "text-gray-600"
+          } text-xl xl:text-lg sm:text-sm`}
+        >
+          {isDark
+            ? "Sleek and easy on the eyes!"
+            : "Bright and clear and lively!"}
+        </p>
+      </div>
     </div>
   );
 };

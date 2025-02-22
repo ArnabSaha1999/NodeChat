@@ -118,6 +118,29 @@
   }
 }
 
+html, body {
+  height: 100%; /* Ensure body fills the viewport */
+  margin: 0; /* Remove default margin */
+  overflow: hidden; /* Prevent scrollbars on body */
+}
+
+body::-webkit-scrollbar {
+  width: 4px;
+  background: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 10px;
+}
+
+body {
+  scrollbar-width: thin;
+  scrollbar-color: #888 transparent;
+  -ms-overflow-style: none;
+  overflow-y: auto !important; /* Ensure scrolling works */
+}
+
 .poppins-regular {
   font-family: "Poppins", serif;
   font-weight: 400;
