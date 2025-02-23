@@ -1,11 +1,10 @@
-import { useProfileFormContext } from "@/context/ProfileFormContext";
 import { useProfileUIContext } from "@/context/ProfileUIContext";
 import { useNavigate } from "react-router-dom";
 
 const ProfileButton = ({ icon: Icon, text, className }) => {
-  const { isActive, setIsActive, setIsThemeContainerOpen, setIsSideBarOpen } =
-    useProfileUIContext();
+  const { isActive, setIsActive, setIsSideBarOpen } = useProfileUIContext();
   const navigate = useNavigate();
+
   return (
     <div className="w-full">
       <button
@@ -19,12 +18,12 @@ const ProfileButton = ({ icon: Icon, text, className }) => {
         }}
         className={`${
           !className
-            ? "w-full text-xl dark:text-[#FFD700] text-[#577BC1] text-left px-10 py-5 hover:bg-[#577BC1] hover:dark:bg-[#FFD700] hover:text-white dark:hover:text-black border-[#577BC1] dark:border-[#FFD700] border-2 rounded-sm transition-all duration-300 flex justify-start items-center gap-3"
+            ? "w-full text-xl text-left px-10 py-5  border-2 rounded-sm transition-all duration-300 flex justify-start items-center gap-3 border-light dark:border-dark"
             : className
         } ${
           isActive === text
-            ? "bg-[#577BC1] dark:bg-[#FFD700] text-white dark:text-black"
-            : ""
+            ? "bg-light text-white dark:bg-dark dark:text-black"
+            : "text-light hover:bg-light hover:text-white dark:text-dark dark:hover:bg-dark dark:hover:text-black"
         }`}
       >
         <Icon className="inline text-3xl" />

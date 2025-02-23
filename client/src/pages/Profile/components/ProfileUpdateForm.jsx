@@ -6,7 +6,6 @@ import { UPDATE_PROFILE } from "@/utils/constants";
 import { useEffect, useRef, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { GrRevert } from "react-icons/gr";
-import { toast } from "react-toastify";
 import GraphemeSplitter from "grapheme-splitter";
 import { MdEdit } from "react-icons/md";
 import { RiCloseLargeFill } from "react-icons/ri";

@@ -153,18 +153,6 @@ const ProfileAvatarContainer = () => {
   };
 
   useEffect(() => {
-    // if (isAvatarContainerOpen) {
-    //   const modalElement = avatarContainerRef.current;
-    //   if (modalElement) {
-    //     modalElement.scrollIntoView({
-    //       behavior: "smooth",
-    //       block: "center", // Center the modal in the viewport
-    //     });
-    //   }
-    //   document.body.style.overflow = "hidden"; // Disable scrolling on the background
-    // } else {
-    //   document.body.style.overflow = ""; // Re-enable scrolling on the background
-    // }
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);

@@ -1,18 +1,13 @@
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import NodeChat_Logo from "@/assets/NodeChat_Logo.png";
 import { useAppStore } from "@/store";
 import { MdModeEdit } from "react-icons/md";
-import { useState } from "react";
 import { useProfileAvatarContext } from "@/context/ProfileAvatarContext";
 import ProfileAvatarContainer from "./ProfileAvatarContainer";
 import { CLOUDINARY_BASE_URL } from "@/utils/constants";
 
 const ProfileAvatar = () => {
-  const { userInfo, setUserInfo } = useAppStore();
-  const [avatar, setAvatar] = useState("");
-  const [email, setEmail] = useState("");
-  const { isAvatarContainerOpen, setIsAvatarContainerOpen, handleAvatarEdit } =
-    useProfileAvatarContext();
+  const { userInfo } = useAppStore();
+  const { isAvatarContainerOpen, handleAvatarEdit } = useProfileAvatarContext();
 
   if (!userInfo) {
     return <div>Loading...</div>; // Or show a placeholder image

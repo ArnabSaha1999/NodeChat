@@ -17,9 +17,7 @@ const Theme = () => {
   );
 
   const previewTheme = (theme) => {
-    if (theme !== tempTheme) {
-      setTempTheme(theme);
-    }
+    setTempTheme(theme);
   };
 
   useEffect(() => {
@@ -34,9 +32,7 @@ const Theme = () => {
   }, [tempTheme]);
 
   const handleDiscardChange = () => {
-    if (tempTheme !== userInfo.themePreference) {
-      setTempTheme(userInfo.themePreference);
-    }
+    setTempTheme(userInfo.themePreference);
   };
 
   const applyTheme = async (theme) => {
