@@ -1,37 +1,31 @@
-import { MdEdit } from "react-icons/md";
+import { useEffect, useRef, useState } from "react";
+import { MdEdit, MdAddAPhoto } from "react-icons/md";
 import { TbTrashXFilled } from "react-icons/tb";
 import { IoClose } from "react-icons/io5";
-import { MdAddAPhoto } from "react-icons/md";
 import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import { AvatarFallback } from "@/components/ui/avatar";
 import { useProfileAvatarContext } from "@/context/ProfileAvatarContext";
-import { useEffect, useRef, useState } from "react";
-import NodeChat_Logo from "@/assets/NodeChat_Logo.png";
 import { useAppStore } from "@/store";
-import { Input } from "@/components/ui/input";
+import { apiClient } from "@/lib/apiClient";
 import {
   ADD_PROFILE_AVATAR_ROUTE,
   CLOUDINARY_BASE_URL,
   REMOVE_PROFILE_AVATAR_ROUTE,
   UPDATE_PROFILE_AVATAR_ROUTE,
 } from "@/utils/constants";
-import { apiClient } from "@/lib/apiClient";
-import { AvatarFallback } from "@/components/ui/avatar";
 import Logo from "@/components/Logo";
+import { showErrorToast, showSuccessToast } from "@/utils/toastNotifications";
+import { handleFileValidation } from "@/utils/validators/validateFiles";
+import FormError from "@/components/FormError";
+import Button from "@/components/Button";
+import FileInput from "@/components/FileInput";
 
 const ProfileAvatarContainer = () => {
   const { userInfo, setUserInfo } = useAppStore();
-  console.log(userInfo);
-  const addAvatarFileInputRef = useRef(null);
-  const updateAvatarFileInputRef = useRef(null);
+  const { avatarContainerRef, setIsAvatarContainerOpen, handleAvatarEdit } =
+    useProfileAvatarContext();
+  const avatarFileInputRef = useRef(null);
   const [error, setError] = useState("");
-  const [isUploadClicked, setIsUploadClicked] = useState(false);
-  const fallbackSrc = "NodeChat/FallBack_Image_xmulal.jpg";
-  const {
-    avatarContainerRef,
-    isAvatarContainerOpen,
-    setIsAvatarContainerOpen,
-    handleAvatarEdit,
-  } = useProfileAvatarContext();
 
   const handleClickOutside = (event) => {
     if (
@@ -42,98 +36,38 @@ const ProfileAvatarContainer = () => {
     }
   };
 
-  const addProfileAvatar = async (event) => {
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [avatarContainerRef]);
+
+  const uploadAvatar = async (event, route) => {
     const file = event.target.files[0];
-    setError("");
-
-    if (!file) {
-      setError("No file was choosen! Please choose an avatar!");
+    const validationError = handleFileValidation(file, setError);
+    if (validationError) {
+      setError(validationError);
       return;
     }
-
-    const validImageTypes = [
-      "image/png",
-      "image/jpg",
-      "image/jpeg",
-      "image/svg",
-      "image/webp",
-    ];
-
-    if (!validImageTypes.includes(file.type)) {
-      setError("Invalid file type! Only image files are allowed!");
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setError(
-        "File size exceeds the 10MB limit! Please upload a smaller file!"
-      );
-      return;
-    }
-    let formData = new FormData();
-    formData.append("profile-avatar", file);
     try {
-      const res = await apiClient.post(ADD_PROFILE_AVATAR_ROUTE, formData, {
+      const formData = new FormData();
+      formData.append("profile-avatar", file);
+      const res = await apiClient.post(route, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           "profile-avatar": "true",
         },
-        withCredentials: true, // Include credentials for the authenticated request
+        withCredentials: true,
       });
 
       if (res.status === 200) {
-        setUserInfo({ ...res.data.user });
+        showSuccessToast("Profile avatar updated successfully!");
+        setUserInfo(res.data.user);
       }
     } catch (error) {
-      console.log({ error });
-      setError("Something went wrong!");
-    }
-  };
-
-  const updateProfileAvatar = async (event) => {
-    const file = event.target.files[0];
-    setError("");
-
-    if (!file) {
-      setError("No file was choosen! Please choose an avatar!");
-      return;
-    }
-
-    const validImageTypes = [
-      "image/png",
-      "image/jpg",
-      "image/jpeg",
-      "image/svg",
-      "image/webp",
-    ];
-
-    if (!validImageTypes.includes(file.type)) {
-      setError("Invalid file type! Only image files are allowed!");
-      return;
-    }
-
-    if (file.size > 10 * 1024 * 1024) {
-      setError(
-        "File size exceeds the 10MB limit! Please upload a smaller file!"
-      );
-      return;
-    }
-    let formData = new FormData();
-    formData.append("profile-avatar", file);
-    try {
-      const res = await apiClient.post(UPDATE_PROFILE_AVATAR_ROUTE, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "profile-avatar": "true",
-        },
-        withCredentials: true, // Include credentials for the authenticated request
-      });
-
-      if (res.status === 200) {
-        setUserInfo({ ...res.data.user });
-      }
-    } catch (error) {
-      console.log({ error });
+      console.error(error);
+      showErrorToast("Failed to update avatar! Please try again!");
       setError("Something went wrong!");
     }
   };
@@ -144,39 +78,24 @@ const ProfileAvatarContainer = () => {
         withCredentials: true,
       });
       if (res.status === 200) {
-        setUserInfo({ ...res.data.user });
+        showSuccessToast("Profile avatar removed successfully!");
+        setUserInfo(res.data.user);
       }
     } catch (error) {
-      console.log({ error });
+      console.error({ error });
       setError("Something went wrong!");
+      showErrorToast("Failed to remove avatar! Please try again!");
     }
   };
 
-  useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.body.style.overflow = "";
-    };
-  }, [avatarContainerRef]);
-
-  const handleAddAvatarInput = () => {
-    if (addAvatarFileInputRef.current) {
-      addAvatarFileInputRef.current.click();
-    }
-  };
-
-  const handleUpdateAvatarInput = () => {
-    if (updateAvatarFileInputRef.current) {
-      updateAvatarFileInputRef.current.click();
+  const handleAvatarInput = (fileInputRef) => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
     }
   };
 
   return (
-    <div
-      autoFocus
-      className="min-w-[100vw] min-h-[100vh] z-[9999] bg-white/70 dark:bg-black/70 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center"
-    >
+    <div className="min-w-[100vw] min-h-[100vh] z-[9999] bg-white/70 dark:bg-black/70 absolute top-0 left-0 right-0 bottom-0 flex items-center justify-center">
       <div
         ref={avatarContainerRef}
         className=" md:h-full md:w-full w-[500px] min-w-[330px] flex flex-col justify-between absolute z-[10000] bg-white dark:bg-slate-800 shadow-2xl rounded-2xl gap-10 px-5 py-10"
@@ -185,7 +104,7 @@ const ProfileAvatarContainer = () => {
           <div className="flex flex-row justify-between items-center">
             <div
               onClick={handleAvatarEdit}
-              className="text-3xl border-[2px] border-[#577BC1] dark:border-[#FFD700] dark:text-white rounded-full p-1 cursor-pointer hover:bg-[#577BC1] hover:text-white hover:dark:bg-[#FFD700] hover:dark:text-black"
+              className="text-3xl border-2 border-light dark:border-dark dark:text-white rounded-full p-1 cursor-pointer hover:bg-light hover:text-white hover:dark:bg-dark hover:dark:text-black"
             >
               <IoClose />
             </div>
@@ -215,62 +134,45 @@ const ProfileAvatarContainer = () => {
                 </AvatarFallback>
               </>
             ) : (
-              <div className="uppercase text-6xl flex items-center justify-center border-[1px] dark:border-[#FFD700] dark:text-[#FFD700] border-[#577BC1] text-[#577BC1] w-72 h-72 2xl:w-72 2xl:h-72 rounded-full overflow-hidden">
+              <div className="uppercase text-6xl flex items-center justify-center border-[1px] dark:border-dark dark:text-dark border-light text-light w-72 h-72 2xl:w-72 2xl:h-72 rounded-full overflow-hidden">
                 {userInfo.email.split("").shift()}
               </div>
             )}
           </Avatar>
         </div>
-
-        {/* Show error message */}
-        {error && <div className="text-red-500 mt-4">{error}</div>}
+        <FormError error={error} />
 
         <div className="flex w-full gap-3 justify-center items-center">
           {userInfo.avatar ? (
             <>
-              <button
-                onClick={handleUpdateAvatarInput}
-                className="flex w-full text-md items-center justify-center gap-2 border-[1px] border-[#577BC1] text-[#577BC1] hover:bg-[#577BC1] hover:text-white dark:border-[#FFD700] dark:text-[#FFD700] hover:dark:bg-[#FFD700] hover:dark:text-black px-6 py-4 rounded-2xl transition-all"
-              >
-                <MdEdit className="text-xl" />
+              <Button onClick={() => handleAvatarInput(avatarFileInputRef)}>
+                <MdEdit />
                 Change
-              </button>
-              <Input
-                type="file"
-                ref={updateAvatarFileInputRef}
-                className="hidden"
-                onChange={updateProfileAvatar}
-                accept=".png, .jpg, .jpeg, .svg, .webp"
-                name="profile-avatar"
-              />
-
-              <button
-                onClick={removeProfileAvatar}
-                className="flex w-full text-md items-center justify-center gap-2 border-[1px] border-[#577BC1] text-[#577BC1] hover:bg-[#577BC1] hover:text-white dark:border-[#FFD700] dark:text-[#FFD700] hover:dark:bg-[#FFD700] hover:dark:text-black px-6 py-4 rounded-2xl transition-all"
-              >
-                <TbTrashXFilled className="text-xl" />
+              </Button>
+              <Button onClick={removeProfileAvatar}>
+                <TbTrashXFilled />
                 Remove
-              </button>
+              </Button>
             </>
           ) : (
-            <>
-              <button
-                onClick={handleAddAvatarInput}
-                className="flex text-md w-full items-center justify-center gap-2 border-[1px] border-[#577BC1] text-[#577BC1] hover:bg-[#577BC1] hover:text-white dark:border-[#FFD700] dark:text-[#FFD700] hover:dark:bg-[#FFD700] hover:dark:text-black px-6 py-4 rounded-2xl transition-all"
-              >
-                <MdAddAPhoto className="text-xl" />
-                Add profile picture
-              </button>
-              <Input
-                type="file"
-                ref={addAvatarFileInputRef}
-                className="hidden"
-                onChange={addProfileAvatar}
-                accept=".png, .jpg, .jpeg, .svg, .webp"
-                name="profile-avatar"
-              />
-            </>
+            <Button onClick={() => handleAvatarInput(avatarFileInputRef)}>
+              <MdAddAPhoto />
+              Add profile picture
+            </Button>
           )}
+          <FileInput
+            onChange={(e) =>
+              uploadAvatar(
+                e,
+                userInfo.avatar
+                  ? UPDATE_PROFILE_AVATAR_ROUTE
+                  : ADD_PROFILE_AVATAR_ROUTE
+              )
+            }
+            ref={avatarFileInputRef}
+            accept=".png, .jpg, .jpeg, .svg, .webp"
+            name="profile-avatar"
+          />
         </div>
       </div>
     </div>

@@ -6,8 +6,7 @@ import ChangePassword from "./ChangePassword";
 import { ChangePasswordProvider } from "@/context/ChangePasswordContext";
 
 const ProfileContent = () => {
-  const { isSideBarOpen, isActive, isThemeContainerOpen } =
-    useProfileUIContext();
+  const { isSideBarOpen, isActive } = useProfileUIContext();
   return (
     <div
       className={`flex gap-10 flex-col w-[70%] 2xl:w-[65%] md:w-full min-h-[100vh] p-5 md:px-2 transition-all duration-300 relative bg-gray-200 dark:bg-zinc-800 ${

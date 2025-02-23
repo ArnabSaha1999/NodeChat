@@ -10,8 +10,8 @@ import GraphemeSplitter from "grapheme-splitter";
 import { MdEdit } from "react-icons/md";
 import { RiCloseLargeFill } from "react-icons/ri";
 import ProfileContentHeader from "@/components/profileComponents/ProfileContentHeader";
-import ButtonGroup from "@/components/profileComponents/ButtonGroup";
-import Button from "@/components/profileComponents/Button";
+import ButtonGroup from "@/components/ButtonGroup";
+import Button from "@/components/Button";
 import FormContainer from "@/components/profileComponents/FormContainer";
 import InputContainer from "@/components/InputContainer";
 import FormError from "@/components/FormError";
@@ -171,7 +171,7 @@ const ProfileUpdateForm = () => {
         { withCredentials: true }
       );
       if (res.status === 200 && res.data?.user) {
-        setUserInfo({ ...res.data.user });
+        setUserInfo(res.data.user);
         showSuccessToast("Profile updated successfully!");
         // navigate("/chat");
       }

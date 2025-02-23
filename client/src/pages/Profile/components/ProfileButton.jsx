@@ -9,12 +9,9 @@ const ProfileButton = ({ icon: Icon, text, className }) => {
     <div className="w-full">
       <button
         onClick={() => {
-          if (text !== "Chats") {
-            setIsActive(text);
-            setIsSideBarOpen(false);
-          } else {
-            navigate("/chat");
-          }
+          text !== "Chats"
+            ? (setIsActive(text), setIsSideBarOpen(false))
+            : navigate("/chats");
         }}
         className={`${
           !className

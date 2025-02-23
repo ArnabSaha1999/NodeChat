@@ -17,8 +17,8 @@ import {
   validatePassword,
 } from "@/utils/validators/validatePasswords";
 import { validateInput } from "@/utils/validators/validateInputFields";
-import Button from "@/components/profileComponents/Button";
-import ButtonGroup from "@/components/profileComponents/ButtonGroup";
+import Button from "@/components/Button";
+import ButtonGroup from "@/components/ButtonGroup";
 import { showErrorToast, showSuccessToast } from "@/utils/toastNotifications";
 const AuthForm = ({ isSignUpForm }) => {
   const {

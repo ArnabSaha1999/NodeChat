@@ -6,8 +6,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { GrRevert } from "react-icons/gr";
 import ThemePreview from "./ThemePreview";
-import ButtonGroup from "@/components/profileComponents/ButtonGroup";
-import Button from "@/components/profileComponents/Button";
+import ButtonGroup from "@/components/ButtonGroup";
+import Button from "@/components/Button";
 import { showErrorToast, showSuccessToast } from "@/utils/toastNotifications";
 
 const Theme = () => {
@@ -53,7 +53,7 @@ const Theme = () => {
             tempTheme.charAt(0).toUpperCase() + tempTheme.slice(1)
           } theme applied Successfully!`
         );
-        setUserInfo({ ...res.data.user });
+        setUserInfo(res.data.user);
       }
     } catch (error) {
       console.error("Theme changed failed:", error);
