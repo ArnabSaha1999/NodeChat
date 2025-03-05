@@ -2,14 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import { MdEdit, MdAddAPhoto } from "react-icons/md";
 import { TbTrashXFilled } from "react-icons/tb";
 import { IoClose } from "react-icons/io5";
-import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
-import { AvatarFallback } from "@/components/ui/avatar";
 import { useProfileAvatarContext } from "@/context/ProfileAvatarContext";
 import { useAppStore } from "@/store";
 import { apiClient } from "@/lib/apiClient";
 import {
   ADD_PROFILE_AVATAR_ROUTE,
-  CLOUDINARY_BASE_URL,
   REMOVE_PROFILE_AVATAR_ROUTE,
   UPDATE_PROFILE_AVATAR_ROUTE,
 } from "@/utils/constants";
@@ -19,6 +16,8 @@ import { handleFileValidation } from "@/utils/validators/validateFiles";
 import FormError from "@/components/FormError";
 import Button from "@/components/Button";
 import FileInput from "@/components/FileInput";
+import AvatarContainer from "@/components/AvatarContainer";
+import IconContainer from "@/components/IconContainer";
 
 const ProfileAvatarContainer = () => {
   const { userInfo, setUserInfo } = useAppStore();
@@ -102,13 +101,17 @@ const ProfileAvatarContainer = () => {
       >
         <div className="flex flex-col gap-5">
           <div className="flex flex-row justify-between items-center">
-            <div
-              onClick={handleAvatarEdit}
-              className="text-3xl border-2 border-light dark:border-dark dark:text-white rounded-full p-1 cursor-pointer hover:bg-light hover:text-white hover:dark:bg-dark hover:dark:text-black"
-            >
-              <IoClose />
-            </div>
-
+            <IconContainer
+              Icons={[
+                {
+                  Icon: IoClose,
+                  className:
+                    "text-4xl border-2 border-light dark:border-dark dark:text-white rounded-full p-1 cursor-pointer hover:bg-light hover:text-white hover:dark:bg-dark hover:dark:text-black",
+                  onClick: handleAvatarEdit,
+                  tooltip: "Close profile picture",
+                },
+              ]}
+            />
             <Logo />
           </div>
           <div className="flex flex-col gap-2">
@@ -119,26 +122,11 @@ const ProfileAvatarContainer = () => {
           </div>
         </div>
         <div className="flex flex-col justify-between items-center gap-10">
-          <Avatar className="w-72 h-72 2xl:w-72 2xl:h-72 rounded-full overflow-hidden">
-            {userInfo.avatar ? (
-              <>
-                <AvatarImage
-                  src={`${CLOUDINARY_BASE_URL}/${userInfo.avatar}`}
-                  className="object-cover w-full h-full bg-black"
-                />
-                <AvatarFallback>
-                  <img
-                    src="https://res.cloudinary.com/dx1ip1gbo/image/upload/v1739031724/NodeChat/FallBack_Image_xmulal.jpg"
-                    className="object-cover w-full h-full bg-black"
-                  />
-                </AvatarFallback>
-              </>
-            ) : (
-              <div className="uppercase text-6xl flex items-center justify-center border-[1px] dark:border-dark dark:text-dark border-light text-light w-72 h-72 2xl:w-72 2xl:h-72 rounded-full overflow-hidden">
-                {userInfo.email.split("").shift()}
-              </div>
-            )}
-          </Avatar>
+          <AvatarContainer
+            avatar={userInfo.avatar}
+            email={userInfo.email}
+            avatarSize="w-72 h-72"
+          />
         </div>
         <FormError error={error} />
 

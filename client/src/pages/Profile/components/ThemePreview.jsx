@@ -3,10 +3,10 @@ const ThemePreview = ({ theme, isSelected, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer p-6 pb-10 sm:px-3 rounded-2xl shadow-lg transition-all w-full h-full flex flex-col gap-5 hover:shadow-2xl hover:scale-105
+      className={`cursor-pointer p-6 pb-10 sm:px-3 rounded-2xl shadow-lg transition-all w-full h-[450px] flex flex-col gap-5 flex-grow hover:shadow-2xl hover:scale-105
           ${
             isSelected
-              ? `border-[4px] ${isDark ? "border-dark" : "border-light"}`
+              ? `border-2 ${isDark ? "border-dark" : "border-light"}`
               : "border border-gray-300 dark:border-gray-600"
           } ${isDark ? "bg-gray-900" : "bg-white"}`}
     >

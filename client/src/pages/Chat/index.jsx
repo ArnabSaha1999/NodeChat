@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
-
+import ChatSidebar from "./components/ChatSidebar";
+import ChatContainer from "./components/ChatContainer";
 const Chat = () => {
   const navigate = useNavigate();
   return (
-    <div>
-      <button onClick={() => navigate("/profile")}>Profile</button>
+    <div className="flex flex-row items-center justify-center w-full h-full text-center">
+      <ChatSidebar />
+      <ChatContainer />
     </div>
   );
 };

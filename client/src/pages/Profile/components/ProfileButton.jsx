@@ -11,7 +11,7 @@ const ProfileButton = ({ icon: Icon, text, className }) => {
         onClick={() => {
           text !== "Chats"
             ? (setIsActive(text), setIsSideBarOpen(false))
-            : navigate("/chats");
+            : navigate("/chat");
         }}
         className={`${
           !className

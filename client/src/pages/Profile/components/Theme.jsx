@@ -69,7 +69,7 @@ const Theme = () => {
           <p className="text-2xl sm:text-lg">
             Select the theme that suits you best.
           </p>
-          <div className="w-[80%] xl:w-full flex flex-row justify-between items-center gap-5 md:gap-2">
+          <div className="w-[80%] h-full xl:w-full flex flex-row justify-between items-center gap-5 md:gap-2">
             <ThemePreview
               theme={"light"}
               onClick={() => previewTheme("light")}
